@@ -4,7 +4,8 @@ State: GotoPoint
     r.robotTimer = 0
     r.move(1)
     r.stop()
-    r.setObjective(x,y)
+    r.setObjective(r.x,r.y)
+    r.setOrientationObjective(ball)
 
 @
 

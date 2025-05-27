@@ -161,6 +161,9 @@ def tipoDado():
         match("CHAR")
     elif lookAhead.type == "IDENTIFIER":
         match("IDENTIFIER")
+    elif lookAhead.type == "ROBOT": # r.attribute
+        match("ROBOT")
+        match("IDENTIFIER")
 
 # corpoOnEntry > r.#Var = tipoDado | r.#Var(parametros) | ϵ
 def corpoOnEntry():

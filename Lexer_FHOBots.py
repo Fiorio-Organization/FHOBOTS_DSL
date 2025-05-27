@@ -3,7 +3,7 @@
 #Vinícius Fiorio Casarin RA:110078
 
 #from ply import lex
-import ply.lex as lex
+import lex as lex
 import sys
 
 tokens = (
