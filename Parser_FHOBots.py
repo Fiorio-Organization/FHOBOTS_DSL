@@ -10,13 +10,41 @@ lexer = inicializaLexer("estados_teste.txt")
 # pega o proximo token
 lookAhead = lexer.token() # Inicialiando o lookAhead
 
-estadosExistentes = {
+# roles e estados declarados na Máquina de Estados
+roles_estados_existentes = {
     "Common": ["GotoPoint", "Backoff", "GotoBall"],
     "Goalkeeper": ["SpinGK"],
     "Defender": ["SeekBallDEF"]
 }
 
-#def analisaEstadoExistente()
+# class robot
+robotMethods = {"move", "setObjective", "setOrientationObjective"}
+robotAttributes = {"isStopped", "robotTimer", "x", "y","xObj", "yObj","role"}
+
+# class worldmodel
+worldModel_atributos = {}
+worldModel_metodos = {}
+
+    ########################
+#   Verificar Existencia de Role e Estado  #
+    ########################
+
+def verificaExistenciaEstado(estado):
+    global roles_estados_existentes
+    for roles in roles_estados_existentes.values():
+        if estado in roles:
+            return True
+    return False
+
+def verificaExistenciaRole(lexema):
+    global roles_estados_existentes
+    return lexema in roles_estados_existentes
+    
+def verificaExistenciaEstadoTransition(role, estado):
+    global roles_estados_existentes
+    return estado in roles_estados_existentes[role]
+
+    ########################
 
 #verificando se o token criado é coerente com a gramática
 def match(esperado):
@@ -33,7 +61,7 @@ def match(esperado):
 def link_transicao():
     global lookAhead
     if lookAhead != None: # se não é fim de arquivo (ϵ)
-        if lookAhead.type == "ROLE":
+        if lookAhead.type == "ROLE_DECLARACAO":
             novo_papel()
         elif lookAhead.type == "ESTADO_TRANSICAO":
             estado_de_transicao()
@@ -43,6 +71,7 @@ def link_transicao():
 # estado_de_transição > $#nome_do_estado [condição] [tratativas] link_transition 
 def estado_de_transicao():
     match("ESTADO_TRANSICAO")
+    match("IDENTIFICADOR")
     match("ABRE_COLCHETE")
     #condicao()
     match("FECHA_COLCHETE")
@@ -53,7 +82,8 @@ def estado_de_transicao():
 
 # Novo_papel > Role: #papel_do_robo estado__de_transição
 def novo_papel():
-    match("ROLE")
+    match("ROLE_DECLARACAO")
+    match("IDENTIFICADOR")
     estado_de_transicao()
 
 # transition > <> Novo_papel
@@ -61,19 +91,33 @@ def transition():
     match("TRANSITION")
     novo_papel()
 
+def checkRobotAttributes(attribute, line):
+    if not attribute in robotAttributes:
+        print("Semantic error on line " + str(line) +":",
+        "Attribute " + attribute + " doesn't exist")
+        sys.exit(1)
+    #else:
+        #print("Attribute " + attribute + " exists")
+
+def checkRobotAttributesAndMethods():
+    match("ROBOT")
+    lexema = lookAhead.value
+    match("IDENTIFICADOR")
+    if lookAhead.type == "OPERADOR_ATRIBUICAO":
+        match("OPERADOR_ATRIBUICAO")
+        checkRobotAttributes(lexema, lookAhead.lineno)
+        tipoDado()
+    
+    elif lookAhead.type == "ABRE_PARENTESES":
+        match("ABRE_PARENTESES")
+        if lookAhead.type == "IDENTIFICADOR":
+            match("IDENTIFICADOR")
+            parametros()
+        match("FECHA_PARENTESES")
+
 def corpoOnExit():
     if lookAhead.type != "TRANSITION":
-        match("ROBOT")
-        if lookAhead.type == "OPERADOR_ATRIBUICAO":
-            match("OPERADOR_ATRIBUICAO")
-            tipoDado()
-
-        elif lookAhead.type == "ABRE_PARENTESES":
-            match("ABRE_PARENTESES")
-            if lookAhead.type == "VAR":
-                match("VAR")
-                parametros()
-            match("FECHA_PARENTESES")
+        checkRobotAttributesAndMethods()
         corpoOnExit()
 
 # onExit > <- corpoOnExit
@@ -101,31 +145,20 @@ def tipoDado():
         match("STRING")
     elif lookAhead.type == "CHAR":
         match("CHAR")
-    elif lookAhead.type == "VAR":
-        match("VAR")
+    elif lookAhead.type == "IDENTIFICADOR":
+        match("IDENTIFICADOR")
 
 # parametros > , #var parametros | ϵ
 def parametros():
     if lookAhead.type == "SEPARADOR":
         match("SEPARADOR")
-        match("VAR")
+        match("IDENTIFICADOR")
 
 
 # corpoOnEntry > r.#Var = tipoDado | r.#Var(parametros) | ϵ
 def corpoOnEntry():
     if lookAhead.type != "ONSTATE":
-        
-        match("ROBOT")
-        if lookAhead.type == "OPERADOR_ATRIBUICAO":
-            match("OPERADOR_ATRIBUICAO")
-            tipoDado()
-
-        elif lookAhead.type == "ABRE_PARENTESES":
-            match("ABRE_PARENTESES")
-            if lookAhead.type == "VAR":
-                match("VAR")
-                parametros()
-            match("FECHA_PARENTESES")
+        checkRobotAttributesAndMethods()
         corpoOnEntry()
 
 # onEntry > -> corpoOnEntry
@@ -136,7 +169,7 @@ def onEntry():
 # Programa > State: #Nome_do_Estado onEntry onState onExit transition
 def programa():
     match("STATE_DECLARACAO")
-    match("STATE_NOME")
+    match("IDENTIFICADOR")
     onEntry()
     onState()
     onExit()

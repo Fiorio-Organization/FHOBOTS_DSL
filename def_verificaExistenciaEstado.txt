@@ -1,0 +1,41 @@
+def verificaExistenciaEstado(estado):
+    global estadosExistentes
+    for roles in estadosExistentes.values():
+        if estado in roles:
+            return True
+    return False
+
+def verificaExistenciaRole(lexema):
+    global estadosExistentes
+    return lexema in estadosExistentes
+    
+def verificaExistenciaEstadoTransition(role, estado):
+    global estadosExistentes
+    return estado in estadosExistentes[role]
+
+estadosExistentes = {
+    "Common": ["GotoPoint", "Backoff", "GotoBall"],
+    "Goalkeeper": ["SpinGK"],
+    "Defender": ["SeekBallDEF"]
+}
+
+nova_role = "Common"
+
+if verificaExistenciaRole(nova_role):
+    print("Existe")
+else:
+    print("n")
+    
+novo_estado = "GotoPoint"
+
+if verificaExistenciaEstadoTransition(nova_role, novo_estado):
+    print("Existe")
+else:
+    print("n")
+    
+novo_estado = "SeekBallDEF"
+
+if verificaExistenciaEstado(novo_estado):
+    print("Existe")
+else:
+    print("n")

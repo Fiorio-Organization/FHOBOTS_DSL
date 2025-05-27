@@ -1,12 +1,10 @@
 State: GotoPoint
 
-->  robot.isStopped = false
-    robot.robotTimer = 0
-    robot.move()
-
-    isStopped false
-    Timer 0
-    move 
+->  r.isStopped = False
+    r.Timer = 0
+    r.move(x,y)
+    r.stop()
+    r.lookat(ball)
 
 @   robot.obj(robot.xobj, robot.yobj)
     if World.isStuck(robot) and !robot.isStopped:

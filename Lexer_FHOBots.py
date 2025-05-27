@@ -9,31 +9,25 @@ import sys
 tokens = (
     "ONENTRY","ONSTATE","ONEXIT","TRANSITION", "STATE_DECLARACAO",
     "STATE_NOME", "ROBOT", "OPERADOR_ARITMETICO", "OPERADOR_ATRIBUICAO", 
-    "ROLE", "ESTADO_TRANSICAO", "ABRE_COLCHETE", "FECHA_COLCHETE",
-    "ABRE_PARENTESES", "FECHA_PARENTESES", "SEPARADOR", "VAR",
+    "ROLE_DECLARACAO", "ESTADO_TRANSICAO", "ABRE_COLCHETE", "FECHA_COLCHETE",
+    "ABRE_PARENTESES", "FECHA_PARENTESES", "SEPARADOR", "IDENTIFICADOR",
     "BOOL", "FLOAT_DOUBLE", "INT", "CHAR", "STRING"
 )
 
-#t_ONENTRY = r"\-\>" #feito em funcao, prioridade
 t_ONSTATE = "\@"
 t_ONEXIT = "\<\-"
 t_TRANSITION = "\<\>"
-t_STATE_DECLARACAO = "State\:" # State: 
-t_ROBOT = "r.[A-Za-z]+" # r.atributo OU r.metodo
 t_OPERADOR_ARITMETICO = "\+|\-|\*|\/|\%" 
 t_OPERADOR_ATRIBUICAO = "\="
-t_ROLE = "Role\:\s[A-Z]\w*"
-t_ESTADO_TRANSICAO = "\$[A-Z]\w*\s"
 t_ABRE_COLCHETE = "\["
 t_FECHA_COLCHETE = "\]"
 t_ABRE_PARENTESES = "\("
 t_FECHA_PARENTESES = "\)"
 t_SEPARADOR = "\,"
-t_VAR = "[A-Za-z]\w*"
+t_IDENTIFICADOR = "[A-Za-z]\w*"
 t_FLOAT_DOUBLE = "\d+\.\d+"
-t_CHAR = "[A-Za-z0-9]"
+t_CHAR = "\'[A-Za-z0-9]\'"
 t_STRING = "\"\w*\""
-#t_STATE_NOME = "[A-Z]\w*" #Nome_do_Estado
 
 def t_MUDA_LINHA(t):
     r"\n"
@@ -44,6 +38,22 @@ t_ignore = " "
 def t_error(t):
     print(t, "Não foi reconhecido!")
     sys.exit(1)
+
+def t_STATE_DECLARACAO(t):
+    "State:"
+    return t
+
+def t_ROLE_DECLARACAO(t):
+    "Role:"
+    return t
+
+def t_ROBOT(t):
+    "r\."
+    return t
+
+def t_ESTADO_TRANSICAO(t):
+    "\$"
+    return t
 
 # garantindo ordem de prioridade / 
 # evitando conflito com t_operador_aritmetico
