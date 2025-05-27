@@ -1,0 +1,32 @@
+State: GotoPoint
+
+->  r.isStopped = False
+    r.Timer = 0
+    r.move(x,y)
+    r.stop()
+    r.lookat(ball)
+
+@
+
+<-  r.Timer = 0
+
+<>
+    Role: Common
+    $Backoff [] []
+
+    Role: Goalkeeper
+    $SpinGK [] []
+
+    $GotoBall [] []
+
+State: GotoBall
+
+->
+
+@
+
+<-
+
+<>
+    Role: Deffensor
+    $SeekBallDEF [] []

@@ -1,0 +1,45 @@
+State: GotoPoint
+
+->  robot.isStopped = false
+    robot.robotTimer = 0
+    robot.move()
+
+    isStopped false
+    Timer 0
+    move 
+
+@   robot.obj(robot.xobj, robot.yobj)
+    if World.isStuck(robot) and !robot.isStopped:
+        robot.timer = robot.timer + 1
+    else
+        robot.timer = 0
+    endif
+    
+<-  robot.timer = 0
+
+<>
+    Role: GoalKeeper
+    $OrientationtoPoint [World.dist(robot, GoalkeeperRole.xGoal, robot.y) < 0.01 and robot.y < 0.215 and robot.y > -0.215] 
+                        [robot.OrientationObj(pi/2)]
+
+    $SpinGK [World.isNearBall(robot)] []
+
+    $GotoBall [World.isAtDeffenseArea(ball)] []
+
+    $IsNotMoving [robot.timer>100] []
+
+
+State: GotoBall
+
+#onEntry#
+->
+
+#onState#
+@   robot.obj(ball)
+    obj ball
+
+#onExit#
+<-
+
+#Transition#
+<>
