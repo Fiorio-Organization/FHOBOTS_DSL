@@ -28,5 +28,5 @@ State: GotoBall
 <-
 
 <>
-    Role: Deffensor
+    Role: Defender
     $SeekBallDEF [] []

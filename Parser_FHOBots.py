@@ -7,11 +7,16 @@ import sys
 
 lexer = inicializaLexer("estados_teste.txt")
 
-#verificar se foi criado
-#print(lexertoken())
-
 # pega o proximo token
 lookAhead = lexer.token() # Inicialiando o lookAhead
+
+estadosExistentes = {
+    "Common": ["GotoPoint", "Backoff", "GotoBall"],
+    "Goalkeeper": ["SpinGK"],
+    "Defender": ["SeekBallDEF"]
+}
+
+#def analisaEstadoExistente()
 
 #verificando se o token criado é coerente com a gramática
 def match(esperado):
@@ -32,7 +37,7 @@ def link_transicao():
             novo_papel()
         elif lookAhead.type == "ESTADO_TRANSICAO":
             estado_de_transicao()
-        elif lookAhead.type == "STATE":
+        elif lookAhead.type == "STATE_DECLARACAO":
             programa()
 
 # estado_de_transição > $#nome_do_estado [condição] [tratativas] link_transition 
@@ -130,7 +135,8 @@ def onEntry():
 
 # Programa > State: #Nome_do_Estado onEntry onState onExit transition
 def programa():
-    match("STATE")
+    match("STATE_DECLARACAO")
+    match("STATE_NOME")
     onEntry()
     onState()
     onExit()

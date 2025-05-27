@@ -7,9 +7,9 @@ import ply.lex as lex
 import sys
 
 tokens = (
-    "ONENTRY","ONSTATE","ONEXIT","TRANSITION", "STATE", "ROBOT",
-    "OPERADOR_ARITMETICO", "OPERADOR_ATRIBUICAO", "ROLE",
-    "ESTADO_TRANSICAO", "ABRE_COLCHETE", "FECHA_COLCHETE",
+    "ONENTRY","ONSTATE","ONEXIT","TRANSITION", "STATE_DECLARACAO",
+    "STATE_NOME", "ROBOT", "OPERADOR_ARITMETICO", "OPERADOR_ATRIBUICAO", 
+    "ROLE", "ESTADO_TRANSICAO", "ABRE_COLCHETE", "FECHA_COLCHETE",
     "ABRE_PARENTESES", "FECHA_PARENTESES", "SEPARADOR", "VAR",
     "BOOL", "FLOAT_DOUBLE", "INT", "CHAR", "STRING"
 )
@@ -18,7 +18,7 @@ tokens = (
 t_ONSTATE = "\@"
 t_ONEXIT = "\<\-"
 t_TRANSITION = "\<\>"
-t_STATE = "State\:\s[A-Z][A-Za-z]*" # State: Nome_do_Estado
+t_STATE_DECLARACAO = "State\:" # State: 
 t_ROBOT = "r.[A-Za-z]+" # r.atributo OU r.metodo
 t_OPERADOR_ARITMETICO = "\+|\-|\*|\/|\%" 
 t_OPERADOR_ATRIBUICAO = "\="
@@ -33,6 +33,7 @@ t_VAR = "[A-Za-z]\w*"
 t_FLOAT_DOUBLE = "\d+\.\d+"
 t_CHAR = "[A-Za-z0-9]"
 t_STRING = "\"\w*\""
+#t_STATE_NOME = "[A-Z]\w*" #Nome_do_Estado
 
 def t_MUDA_LINHA(t):
     r"\n"
