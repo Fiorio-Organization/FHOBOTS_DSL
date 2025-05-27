@@ -29,14 +29,14 @@ t_FLOAT_DOUBLE = "\d+\.\d+"
 t_CHAR = "\'[A-Za-z0-9]\'"
 t_STRING = "\"\w*\""
 
-def t_MUDA_LINHA(t):
+def t_NEXT_LINE(t):
     r"\n"
     t.lexer.lineno += 1
 # Esses tokens são pré-definidos e não precisam comparecer na tupla "tokens"
 t_ignore = " "
 
 def t_error(t):
-    print(t, "Não foi reconhecido!")
+    print(t, "Not recognized!")
     sys.exit(1)
 
 def t_STATE_DECLARATION(t):
@@ -69,25 +69,25 @@ def t_INT(t):
     "\d+"
     return t
 
-def inicializaLexer(arquivo):
+def initializeLexer(file):
     # Terceiro passo: abrir o código fonte
-    arquivo = open(arquivo)
-    conteudo = arquivo.read()
+    file = open(file)
+    content = file.read()
 
     #Quarto passo: instanciar o lexer e carregar o conteúdo
     l = lex.lex()
-    l.input(conteudo)
+    l.input(content)
     return l
 
-def proximoToken():
+def nextToken():
     return l.token() #lê o proximo token
 
-arquivo = open('estados_teste.txt')
-conteudo = arquivo.read()
+file = open('estados_teste.txt')
+content = file.read()
 print()
 
 l = lex.lex()
-l.input(conteudo)
+l.input(content)
 
 while True:
     t = l.token() 

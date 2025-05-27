@@ -2,16 +2,16 @@
 #Victor Fiorio Casarin   RA:110332
 #Vinícius Fiorio Casarin RA:110078
 
-from Lexer_FHOBots import inicializaLexer
+from Lexer_FHOBots import initializeLexer
 import sys
 
-lexer = inicializaLexer("estados_teste.txt")
+lexer = initializeLexer("estados_teste.txt")
 
 # pega o proximo token
 lookAhead = lexer.token() # Inicialiando o lookAhead
 
 # roles e estados declarados na Máquina de Estados
-roles_estados_existentes = {
+rolesAndStatesFromStateMachine = {
     "Common": ["GotoPoint", "Backoff", "GotoBall"],
     "Goalkeeper": ["SpinGK"],
     "Defender": ["SeekBallDEF"]
@@ -21,40 +21,40 @@ roles_estados_existentes = {
 robotMethods = {"move", "stop", "setObjective", "setOrientationObjective"}
 robotAttributes = {"isStopped", "robotTimer", "x", "y","xObj", "yObj","role"}
 
-# class worldmodel
-worldModel_atributos = {}
-worldModel_metodos = {}
+# class worldModel
+worldModelAttributes = {}
+worldModelMethods = {}
 
     ########################
 #   Verificar Existencia de Role e Estado  #
     ########################
 
-def verificaExistenciaEstado(estado):
-    global roles_estados_existentes
-    for roles in roles_estados_existentes.values():
-        if estado in roles:
+def stateExists(state):
+    global rolesAndStatesFromStateMachine
+    for roles in rolesAndStatesFromStateMachine.values():
+        if state in roles:
             return True
     return False
 
-def verificaExistenciaRole(lexema):
-    global roles_estados_existentes
-    return lexema in roles_estados_existentes
+def roleExists(lexema):
+    global rolesAndStatesFromStateMachine
+    return lexema in rolesAndStatesFromStateMachine
     
-def verificaExistenciaEstadoTransition(role, estado):
-    global roles_estados_existentes
-    return estado in roles_estados_existentes[role]
+def transitionStateExists(role, state):
+    global rolesAndStatesFromStateMachine
+    return state in rolesAndStatesFromStateMachine[role]
 
     ########################
 
 #verificando se o token criado é coerente com a gramática
-def match(esperado):
+def match(expected):
     global lookAhead
-    if lookAhead != None and esperado == lookAhead.type:
+    if lookAhead != None and expected == lookAhead.type:
         lookAhead = lexer.token() #continua o processo
         return
     
     # se não, tenho um erro sintático
-    print("Erro sintático na linha", lexer.lineno, "Esperado", esperado, "lido", lookAhead)
+    print("Syntax error on line", lexer.lineno, "Expected", expected, "read", lookAhead)
     sys.exit(1) #1 indica que houve erro
 
 # link_transition > Novo_papel | estado_de_transicao | programa | ϵ
@@ -154,7 +154,7 @@ def tipoDado():
     elif lookAhead.type == "INT":
         match("INT")
     elif lookAhead.type == "FLOAT_DOUBLE":
-        match("STRING")
+        match("FLOAT_DOUBLE")
     elif lookAhead.type == "STRING":
         match("STRING")
     elif lookAhead.type == "CHAR":
