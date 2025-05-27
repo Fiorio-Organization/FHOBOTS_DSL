@@ -2,9 +2,9 @@ State: GotoPoint
 
 ->  r.isStopped = False
     r.robotTimer = 0
-    r.move(x,y)
+    r.move(1)
     r.stop()
-    r.lookat(ball)
+    r.setObjective(x,y)
 
 @
 

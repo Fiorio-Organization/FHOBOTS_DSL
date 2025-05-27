@@ -7,24 +7,24 @@ import ply.lex as lex
 import sys
 
 tokens = (
-    "ONENTRY","ONSTATE","ONEXIT","TRANSITION", "STATE_DECLARACAO",
-    "STATE_NOME", "ROBOT", "OPERADOR_ARITMETICO", "OPERADOR_ATRIBUICAO", 
-    "ROLE_DECLARACAO", "ESTADO_TRANSICAO", "ABRE_COLCHETE", "FECHA_COLCHETE",
-    "ABRE_PARENTESES", "FECHA_PARENTESES", "SEPARADOR", "IDENTIFICADOR",
+    "ONENTRY","ONSTATE","ONEXIT","TRANSITION", "STATE_DECLARATION", "ROBOT", 
+    "ARITHMETIC_OPERATOR", "ASSIGNMENT_OPERATOR", "ROLE_DECLARATION",
+    "STATE_TRANSITION", "OPEN_BRACKET", "CLOSE_BRACKET",
+    "OPEN_PARENTHESIS", "CLOSE_PARENTHESIS", "SEPARATOR", "IDENTIFIER",
     "BOOL", "FLOAT_DOUBLE", "INT", "CHAR", "STRING"
 )
 
 t_ONSTATE = "\@"
 t_ONEXIT = "\<\-"
 t_TRANSITION = "\<\>"
-t_OPERADOR_ARITMETICO = "\+|\-|\*|\/|\%" 
-t_OPERADOR_ATRIBUICAO = "\="
-t_ABRE_COLCHETE = "\["
-t_FECHA_COLCHETE = "\]"
-t_ABRE_PARENTESES = "\("
-t_FECHA_PARENTESES = "\)"
-t_SEPARADOR = "\,"
-t_IDENTIFICADOR = "[A-Za-z]\w*"
+t_ARITHMETIC_OPERATOR = "\+|\-|\*|\/|\%" 
+t_ASSIGNMENT_OPERATOR = "\="
+t_OPEN_BRACKET = "\["
+t_CLOSE_BRACKET = "\]"
+t_OPEN_PARENTHESIS = "\("
+t_CLOSE_PARENTHESIS = "\)"
+t_SEPARATOR = "\,"
+t_IDENTIFIER = "[A-Za-z]\w*"
 t_FLOAT_DOUBLE = "\d+\.\d+"
 t_CHAR = "\'[A-Za-z0-9]\'"
 t_STRING = "\"\w*\""
@@ -39,11 +39,11 @@ def t_error(t):
     print(t, "Não foi reconhecido!")
     sys.exit(1)
 
-def t_STATE_DECLARACAO(t):
+def t_STATE_DECLARATION(t):
     "State:"
     return t
 
-def t_ROLE_DECLARACAO(t):
+def t_ROLE_DECLARATION(t):
     "Role:"
     return t
 
@@ -51,7 +51,7 @@ def t_ROBOT(t):
     "r\."
     return t
 
-def t_ESTADO_TRANSICAO(t):
+def t_STATE_TRANSITION(t):
     "\$"
     return t
 

@@ -18,7 +18,7 @@ roles_estados_existentes = {
 }
 
 # class robot
-robotMethods = {"move", "setObjective", "setOrientationObjective"}
+robotMethods = {"move", "stop", "setObjective", "setOrientationObjective"}
 robotAttributes = {"isStopped", "robotTimer", "x", "y","xObj", "yObj","role"}
 
 # class worldmodel
@@ -61,35 +61,42 @@ def match(esperado):
 def link_transicao():
     global lookAhead
     if lookAhead != None: # se não é fim de arquivo (ϵ)
-        if lookAhead.type == "ROLE_DECLARACAO":
+        if lookAhead.type == "ROLE_DECLARATION":
             novo_papel()
-        elif lookAhead.type == "ESTADO_TRANSICAO":
+        elif lookAhead.type == "STATE_TRANSITION":
             estado_de_transicao()
-        elif lookAhead.type == "STATE_DECLARACAO":
+        elif lookAhead.type == "STATE_DECLARATION":
             programa()
 
 # estado_de_transição > $#nome_do_estado [condição] [tratativas] link_transition 
 def estado_de_transicao():
-    match("ESTADO_TRANSICAO")
-    match("IDENTIFICADOR")
-    match("ABRE_COLCHETE")
+    match("STATE_TRANSITION")
+    match("IDENTIFIER")
+    match("OPEN_BRACKET")
     #condicao()
-    match("FECHA_COLCHETE")
-    match("ABRE_COLCHETE")
+    match("CLOSE_BRACKET")
+    match("OPEN_BRACKET")
     #tratativa()
-    match("FECHA_COLCHETE")
+    match("CLOSE_BRACKET")
     link_transicao()
 
 # Novo_papel > Role: #papel_do_robo estado__de_transição
 def novo_papel():
-    match("ROLE_DECLARACAO")
-    match("IDENTIFICADOR")
+    match("ROLE_DECLARATION")
+    match("IDENTIFIER")
     estado_de_transicao()
 
 # transition > <> Novo_papel
 def transition():
     match("TRANSITION")
     novo_papel()
+
+# parametros > , #var parametros | ϵ
+def parametros():
+    tipoDado()
+    if lookAhead.type == "SEPARATOR":
+        match("SEPARATOR")
+        parametros()
 
 def checkRobotAttributes(attribute, line):
     if not attribute in robotAttributes:
@@ -99,21 +106,28 @@ def checkRobotAttributes(attribute, line):
     #else:
         #print("Attribute " + attribute + " exists")
 
+def checkRobotMethods(method, line):
+    if not method in robotMethods:
+        print("Semantic error on line " + str(line) +":",
+        "Method " + method + " doesn't exist")
+        sys.exit(1)
+    #else:
+        #print("Method " + attribute + " exists")
+
 def checkRobotAttributesAndMethods():
     match("ROBOT")
     lexema = lookAhead.value
-    match("IDENTIFICADOR")
-    if lookAhead.type == "OPERADOR_ATRIBUICAO":
-        match("OPERADOR_ATRIBUICAO")
+    match("IDENTIFIER")
+    if lookAhead.type == "ASSIGNMENT_OPERATOR":
+        match("ASSIGNMENT_OPERATOR")
         checkRobotAttributes(lexema, lookAhead.lineno)
         tipoDado()
     
-    elif lookAhead.type == "ABRE_PARENTESES":
-        match("ABRE_PARENTESES")
-        if lookAhead.type == "IDENTIFICADOR":
-            match("IDENTIFICADOR")
-            parametros()
-        match("FECHA_PARENTESES")
+    elif lookAhead.type == "OPEN_PARENTHESIS":
+        match("OPEN_PARENTHESIS")
+        checkRobotMethods(lexema, lookAhead.lineno)
+        parametros()
+        match("CLOSE_PARENTHESIS")
 
 def corpoOnExit():
     if lookAhead.type != "TRANSITION":
@@ -145,15 +159,8 @@ def tipoDado():
         match("STRING")
     elif lookAhead.type == "CHAR":
         match("CHAR")
-    elif lookAhead.type == "IDENTIFICADOR":
-        match("IDENTIFICADOR")
-
-# parametros > , #var parametros | ϵ
-def parametros():
-    if lookAhead.type == "SEPARADOR":
-        match("SEPARADOR")
-        match("IDENTIFICADOR")
-
+    elif lookAhead.type == "IDENTIFIER":
+        match("IDENTIFIER")
 
 # corpoOnEntry > r.#Var = tipoDado | r.#Var(parametros) | ϵ
 def corpoOnEntry():
@@ -168,8 +175,8 @@ def onEntry():
 
 # Programa > State: #Nome_do_Estado onEntry onState onExit transition
 def programa():
-    match("STATE_DECLARACAO")
-    match("IDENTIFICADOR")
+    match("STATE_DECLARATION")
+    match("IDENTIFIER")
     onEntry()
     onState()
     onExit()
