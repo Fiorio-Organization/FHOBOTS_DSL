@@ -4,7 +4,8 @@
 
 from Lexer_FHOBots import initializeLexer
 import sys
-import os #pasta de arquivos
+import xml.etree.ElementTree as ET # xml
+import os # pasta de arquivos
 
 lexer = initializeLexer("estados_teste.txt")
 
@@ -12,11 +13,20 @@ lexer = initializeLexer("estados_teste.txt")
 lookAhead = lexer.token() # Inicialiando o lookAhead
 
 # roles e estados declarados na Máquina de Estados
-rolesAndStatesFromStateMachine = {
-    "Common": ["GotoPoint", "Backoff", "GotoBall"],
-    "Goalkeeper": ["SpinGK"],
-    "Defender": ["SeekBallDEF"]
-}
+def loadRolesAndStatesFromXML(xml_file):
+    roles_states = {} # dicionario de roles e states
+    tree = ET.parse(xml_file) # tree recebe estrutura xml
+    root = tree.getroot() # obtem raiz State
+    # obtendo todos os name de states em cada category do arquivo xml
+    for category in root.findall('category'):
+        role_name = category.get('name')
+        # encontra e associa um state a uma role (chave)
+        states = [state.get('name') for state in category.findall('state')] # states.append(state.get('name'))
+        roles_states[role_name] = states 
+    return roles_states
+
+rolesAndStatesFromStateMachine = loadRolesAndStatesFromXML("states.xml")
+#print(rolesAndStatesFromStateMachine)
 
 # class robot
 robotMethods = {"move", "stop", "setObjective", "setOrientationObjective"}

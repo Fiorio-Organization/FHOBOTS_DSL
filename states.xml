@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+<states>
+  <category name="attacker">
+    <state name="seekBallATK" />
+    <state name="shotToGoal" />
+    <state name="spinATK" />
+  </category>
+  <category name="common">
+    <state name="backoff" />
+    <state name="gotoBall" />
+    <state name="gotoPoint" />
+    <state name="idlestate" />
+    <state name="isNotMoving" />
+    <state name="isSlidingOnTheWall" />
+    <state name="orientationtoPoint" />
+    <state name="spin" />
+  </category>
+  <category name="defender">
+    <state name="clearBall" />
+    <state name="seekBall" />
+    <state name="shotBallDF" />
+  </category>
+  <category name="defenderCentral">
+    <state name="DFC_gotoPoint" />
+    <state name="DFC_orientationtoPoint" />
+    <state name="DFC_seekBall" />
+    <state name="DFC_spin" />
+  </category>
+  <category name="defenderLeft">
+    <state name="DFL_gotoPoint" />
+    <state name="DFL_orientationtoPoint" />
+    <state name="DFL_seekBall" />
+    <state name="DFL_spin" />
+  </category>
+  <category name="defenderRight">
+    <state name="DFR_gotoPoint" />
+    <state name="DFR_orientationtoPoint" />
+    <state name="DFR_seekBall" />
+    <state name="DFR_spin" />
+  </category>
+  <category name="game_events">
+    <state name="goalKick" />
+    <state name="penalty" />
+    <state name="penaltyGK" />
+  </category>
+  <category name="goalkeeper">
+    <state name="backoffGK" />
+    <state name="clearSideBallGK" />
+    <state name="seekBallGK" />
+    <state name="spinGK" />
+  </category>
+</states>
