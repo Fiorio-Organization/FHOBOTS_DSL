@@ -62,7 +62,7 @@ def t_ONENTRY(t):
     return t
 
 def t_BOOL(t) :
-    "True|False"
+    "true|false"
     return t
 
 def t_INT(t):

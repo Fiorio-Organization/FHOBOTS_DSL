@@ -4,6 +4,7 @@
 
 from Lexer_FHOBots import initializeLexer
 import sys
+import os #pasta de arquivos
 
 lexer = initializeLexer("estados_teste.txt")
 
@@ -115,17 +116,28 @@ def checkRobotMethods(method, line):
         #print("Method " + attribute + " exists")
 
 def checkRobotAttributesAndMethods():
+    global id_state
+    global arquivo_cpp
     match("ROBOT")
     lexema = lookAhead.value
     match("IDENTIFIER")
+    arquivo_cpp.write(
+    f"robot->{lexema} "
+    )
     if lookAhead.type == "ASSIGNMENT_OPERATOR":
         match("ASSIGNMENT_OPERATOR")
+        td = lookAhead.value
         checkRobotAttributes(lexema, lookAhead.lineno)
         tipoDado()
+        arquivo_cpp.write(
+        f"= {td}\n"
+        )
     
     elif lookAhead.type == "OPEN_PARENTHESIS":
         match("OPEN_PARENTHESIS")
+        m = lookAhead.value
         checkRobotMethods(lexema, lookAhead.lineno)
+        
         parametros()
         match("CLOSE_PARENTHESIS")
 
@@ -173,13 +185,62 @@ def corpoOnEntry():
 
 # onEntry > -> corpoOnEntry
 def onEntry():
+    global id_state
+    global arquivo_cpp
     match("ONENTRY")
+    arquivo_cpp.write(
+f"void {id_state}::onEntry(Robot * robot, IWorldModel * worldModel){{\n"
+)
     corpoOnEntry()
 
 # Programa > State: #Nome_do_Estado onEntry onState onExit transition
 def programa():
+    global id_role
+    id_role = lookAhead.value
+    id_role_name = id_role[0].lower() + id_role[1:]
+
     match("STATE_DECLARATION")
+
+    global id_state
+    id_state = lookAhead.value
+    id_state_name = id_state[0].lower() + id_state[1:]
+    id_state_header = id_state.upper()
+
     match("IDENTIFIER")
+
+    global arquivo_hpp
+    # Garante que o diretório exista
+    os.makedirs("header", exist_ok=True)
+    arquivo_hpp = open("header/" + id_state_name + ".hpp", "w")
+    arquivo_hpp.write(
+f"#ifndef {id_state_header}_HPP\n"
+f"#define {id_state_header}_HPP\n\n"
+f"class {id_state}: public State{{\n"
+f"private:\n"
+f"    {id_state}(std::string stateLabel);\n\n"
+f"public:\n" 
+f"    void onEntry(Robot * robot, IWorldModel * worldModel);\n"
+f"    void onState(Robot * robot, IWorldModel * worldModel);\n"
+f"    void onExit (Robot * robot, IWorldModel * worldModel);\n"
+f"    State * transition(Robot * robot, IWorldModel * worldModel);\n"
+f"    static {id_state} * getInstance(std::string stateLabel);\n"
+f"    static {id_state} * instance;\n"
+f"}};\n\n"
+f"#endif"
+    )
+
+    global arquivo_cpp
+    os.makedirs("src", exist_ok=True)
+    arquivo_cpp = open("src/" + id_state_name + ".cpp", "w")
+    arquivo_cpp.write(
+f"#include \"../../header/common/{id_state_name}.hpp\"\n"
+f"#include <iostream>\n\n"
+f"{id_state} * {id_state}::instance = NULL;\n\n"
+f"{id_state}::{id_state}(std::string stateLabel){{\n"
+f"    this->stateLabel = stateLabel;\n"
+f"}}\n\n"
+    )
+
     onEntry()
     onState()
     onExit()

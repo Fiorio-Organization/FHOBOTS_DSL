@@ -1,6 +1,6 @@
 State: GotoPoint
 
-->  r.isStopped = False
+->  r.isStopped = false
     r.robotTimer = 0
     r.move(1)
     r.stop()
