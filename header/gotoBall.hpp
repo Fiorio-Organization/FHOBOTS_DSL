@@ -1,5 +1,5 @@
-#ifndef GOTOBALL_HPP
-#define GOTOBALL_HPP
+#ifndef GOTO_BALL_HPP
+#define GOTO_BALL_HPP
 
 class GotoBall: public State{
 private:

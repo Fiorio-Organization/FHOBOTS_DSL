@@ -1,5 +1,5 @@
-#ifndef GOTOPOINT_HPP
-#define GOTOPOINT_HPP
+#ifndef GOTO_POINT_HPP
+#define GOTO_POINT_HPP
 
 class GotoPoint: public State{
 private:

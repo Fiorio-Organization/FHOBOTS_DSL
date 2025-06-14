@@ -374,8 +374,15 @@ def program():
 
     global id_state
     id_state = lookAhead.value
+
     id_state_name = id_state[0].lower() + id_state[1:]
-    id_state_header = id_state.upper()
+    
+    id_state_header = ""
+    for char in id_state_name:
+        if char.isupper():
+            id_state_header += "_"
+        id_state_header += char
+    id_state_header = id_state_header.upper()
 
     match("IDENTIFIER")
 
