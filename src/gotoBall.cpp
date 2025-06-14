@@ -8,3 +8,5 @@ GotoBall::GotoBall(std::string stateLabel){
 }
 
 void GotoBall::onEntry(Robot * robot, IWorldModel * worldModel){
+}
+

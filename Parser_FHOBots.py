@@ -104,6 +104,7 @@ def transition():
 
 # parametros > , #var parametros | ϵ
 def parametros():
+    m = lookAhead.value
     tipoDado()
     if lookAhead.type == "SEPARATOR":
         match("SEPARATOR")
@@ -132,7 +133,7 @@ def checkRobotAttributesAndMethods():
     lexema = lookAhead.value
     match("IDENTIFIER")
     arquivo_cpp.write(
-    f"robot->{lexema} "
+    f"robot->{lexema}"
     )
     if lookAhead.type == "ASSIGNMENT_OPERATOR":
         match("ASSIGNMENT_OPERATOR")
@@ -140,16 +141,21 @@ def checkRobotAttributesAndMethods():
         checkRobotAttributes(lexema, lookAhead.lineno)
         tipoDado()
         arquivo_cpp.write(
-        f"= {td}\n"
+        f" = {td};\n"
         )
     
     elif lookAhead.type == "OPEN_PARENTHESIS":
         match("OPEN_PARENTHESIS")
-        m = lookAhead.value
-        checkRobotMethods(lexema, lookAhead.lineno)
+        arquivo_cpp.write(
+        f"("
+        )
         
+        checkRobotMethods(lexema, lookAhead.lineno)            
         parametros()
         match("CLOSE_PARENTHESIS")
+        arquivo_cpp.write(
+        f");\n"
+        )
 
 def corpoOnExit():
     if lookAhead.type != "TRANSITION":
@@ -199,9 +205,12 @@ def onEntry():
     global arquivo_cpp
     match("ONENTRY")
     arquivo_cpp.write(
-f"void {id_state}::onEntry(Robot * robot, IWorldModel * worldModel){{\n"
-)
+        f"void {id_state}::onEntry(Robot * robot, IWorldModel * worldModel){{\n"
+    )
     corpoOnEntry()
+    arquivo_cpp.write(
+    f"}}\n\n"
+    )
 
 # Programa > State: #Nome_do_Estado onEntry onState onExit transition
 def programa():
@@ -223,32 +232,32 @@ def programa():
     os.makedirs("header", exist_ok=True)
     arquivo_hpp = open("header/" + id_state_name + ".hpp", "w")
     arquivo_hpp.write(
-f"#ifndef {id_state_header}_HPP\n"
-f"#define {id_state_header}_HPP\n\n"
-f"class {id_state}: public State{{\n"
-f"private:\n"
-f"    {id_state}(std::string stateLabel);\n\n"
-f"public:\n" 
-f"    void onEntry(Robot * robot, IWorldModel * worldModel);\n"
-f"    void onState(Robot * robot, IWorldModel * worldModel);\n"
-f"    void onExit (Robot * robot, IWorldModel * worldModel);\n"
-f"    State * transition(Robot * robot, IWorldModel * worldModel);\n"
-f"    static {id_state} * getInstance(std::string stateLabel);\n"
-f"    static {id_state} * instance;\n"
-f"}};\n\n"
-f"#endif"
+        f"#ifndef {id_state_header}_HPP\n"
+        f"#define {id_state_header}_HPP\n\n"
+        f"class {id_state}: public State{{\n"
+        f"private:\n"
+        f"    {id_state}(std::string stateLabel);\n\n"
+        f"public:\n" 
+        f"    void onEntry(Robot * robot, IWorldModel * worldModel);\n"
+        f"    void onState(Robot * robot, IWorldModel * worldModel);\n"
+        f"    void onExit (Robot * robot, IWorldModel * worldModel);\n"
+        f"    State * transition(Robot * robot, IWorldModel * worldModel);\n"
+        f"    static {id_state} * getInstance(std::string stateLabel);\n"
+        f"    static {id_state} * instance;\n"
+        f"}};\n\n"
+        f"#endif"
     )
 
     global arquivo_cpp
     os.makedirs("src", exist_ok=True)
     arquivo_cpp = open("src/" + id_state_name + ".cpp", "w")
     arquivo_cpp.write(
-f"#include \"../../header/common/{id_state_name}.hpp\"\n"
-f"#include <iostream>\n\n"
-f"{id_state} * {id_state}::instance = NULL;\n\n"
-f"{id_state}::{id_state}(std::string stateLabel){{\n"
-f"    this->stateLabel = stateLabel;\n"
-f"}}\n\n"
+        f"#include \"../../header/common/{id_state_name}.hpp\"\n"
+        f"#include <iostream>\n\n"
+        f"{id_state} * {id_state}::instance = NULL;\n\n"
+        f"{id_state}::{id_state}(std::string stateLabel){{\n"
+        f"    this->stateLabel = stateLabel;\n"
+        f"}}\n\n"
     )
 
     onEntry()
