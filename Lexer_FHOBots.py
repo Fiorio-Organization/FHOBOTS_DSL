@@ -11,8 +11,8 @@ tokens = (
     "ARITHMETIC_OPERATOR", "ASSIGNMENT_OPERATOR", "ROLE_DECLARATION",
     "STATE_TRANSITION", "OPEN_BRACKET", "CLOSE_BRACKET",
     "OPEN_PARENTHESIS", "CLOSE_PARENTHESIS", "SEPARATOR", "IDENTIFIER",
-    "BOOL", "FLOAT_DOUBLE", "INT", "CHAR", "STRING", "IF","ELIF", "ELSE", "END_IF", "COLON",
-    "COMPARISON_OPERATOR"
+    "VARIABLE_DECLARATION", "BOOL", "FLOAT_DOUBLE", "INT", "CHAR", "STRING", 
+    "IF","ELIF", "ELSE", "END_IF", "COLON", "COMPARISON_OPERATOR"
 )
 
 t_ONSTATE = "\@"
@@ -38,6 +38,10 @@ t_ignore = " "
 def t_error(t):
     print(t, "Not recognized!")
     sys.exit(1)
+
+def t_VARIABLE_DECLARATION(t):
+    "int|float|char|double|bool"
+    return t    
 
 def t_STATE_DECLARATION(t):
     "State:"

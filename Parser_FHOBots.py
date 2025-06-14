@@ -36,6 +36,9 @@ robotAttributes = {"isStopped", "robotTimer", "x", "y","xObj", "yObj","role"}
 worldModelAttributes = {"isPlayingLeft"}
 worldModelMethods = {"isStuck"}
 
+# declared vars
+declaredVars = {}
+
     ########################
 #   Verificar Existencia de Role e Estado  #
     ########################
@@ -110,6 +113,60 @@ def parameters():
         match("SEPARATOR")
         parameters()
 
+def checkIdentifier():
+    global id_state
+    global cpp_file
+    lexeme = lookAhead.value
+    match("IDENTIFIER")
+    if not lexeme in declaredVars:
+        print("Semantic error on line " + str(lookAhead.lineno) +":",
+        "Identifier " + lexeme + " not declared in state " + id_state)
+        sys.exit(1)
+    cpp_file.write(
+        f"\t{lexeme}"
+    )
+    if lookAhead.type == "ASSIGNMENT_OPERATOR":
+        match("ASSIGNMENT_OPERATOR")
+        td = lookAhead.value
+        dataType()
+        cpp_file.write(
+            f" = {td};\n"
+        )
+    
+    else:
+        print("Semantic error on line " + str(lookAhead.lineno) +":",
+        "Identifier " + lexeme + " not assigned in state " + id_state)
+
+def checkVarDeclaration():
+    global id_state
+    global cpp_file
+    variableType = lookAhead.value
+    match("VARIABLE_DECLARATION")
+    lexema = lookAhead.value
+    match("IDENTIFIER")
+    
+    if lexema in declaredVars:
+        print("Semantic error on line " + str(lookAhead.lineno) +":",
+        "Variable " + lexema + " already declared in state " + id_state)
+        sys.exit(1)
+    
+    declaredVars[lexema] = True
+    
+    cpp_file.write(
+        f"\t{variableType} {lexema}"
+    )
+    
+    if lookAhead.type == "ASSIGNMENT_OPERATOR":
+        match("ASSIGNMENT_OPERATOR")
+        td = lookAhead.value
+        dataType()
+        cpp_file.write(
+            f" = {td}"
+        )
+    cpp_file.write(
+            f";\n"
+        )
+
 def checkWorldModelAttributes(attribute, line):
     if not attribute in worldModelAttributes:
         print("Semantic error on line " + str(line) +":",
@@ -121,22 +178,6 @@ def checkWorldModelMethods(method, line):
         print("Semantic error on line " + str(line) +":",
         "Method " + method + " doesn't exist in WorldModel")
         sys.exit(1)
-
-def checkRobotAttributes(attribute, line):
-    if not attribute in robotAttributes:
-        print("Semantic error on line " + str(line) +":",
-        "Attribute " + attribute + " doesn't exist")
-        sys.exit(1)
-    #else:
-        #print("Attribute " + attribute + " exists")
-
-def checkRobotMethods(method, line):
-    if not method in robotMethods:
-        print("Semantic error on line " + str(line) +":",
-        "Method " + method + " doesn't exist")
-        sys.exit(1)
-    #else:
-        #print("Method " + attribute + " exists")
 
 def checkWorldModel():
     global id_state
@@ -167,6 +208,22 @@ def checkWorldModel():
         cpp_file.write(
             f");\n"
         )
+
+def checkRobotAttributes(attribute, line):
+    if not attribute in robotAttributes:
+        print("Semantic error on line " + str(line) +":",
+        "Attribute " + attribute + " doesn't exist")
+        sys.exit(1)
+    #else:
+        #print("Attribute " + attribute + " exists")
+
+def checkRobotMethods(method, line):
+    if not method in robotMethods:
+        print("Semantic error on line " + str(line) +":",
+        "Method " + method + " doesn't exist")
+        sys.exit(1)
+    #else:
+        #print("Method " + attribute + " exists")
 
 def checkRobot():
     global id_state
@@ -234,6 +291,9 @@ def dataType():
     elif lookAhead.type == "ROBOT": # r.attribute
         match("ROBOT")
         match("IDENTIFIER")
+    elif lookAhead.type == "WORLDMODEL": # world.attribute
+        match("WORLDMODEL")
+        match("IDENTIFIER")
 
 def checkComparison():
     dataType()
@@ -264,12 +324,18 @@ def checkBody():
         checkRobot()
     elif lookAhead.type == "WORLDMODEL":
         checkWorldModel()
+    elif lookAhead.type == "VARIABLE_DECLARATION":
+        checkVarDeclaration()
+    elif lookAhead.type == "IDENTIFIER":
+        checkIdentifier()
     elif lookAhead.type == "IF":
         checkComparisonStatement()
 
 # corpoOnEntry > r.#Var = tipoDado | r.#Var(parametros) | ϵ
 def OnEntryBody():
-    if lookAhead.type != "ONSTATE":
+    if (lookAhead.type == "ROBOT" or lookAhead.type == "WORLDMODEL" or 
+        lookAhead.type == "VARIABLE_DECLARATION" or lookAhead.type == "IDENTIFIER" or
+        lookAhead.type == "IF"):
         checkBody()
         OnEntryBody()
 
@@ -342,3 +408,25 @@ def program():
 print("--------")
 program()
 print("Syntactically correct!")
+
+    #############
+    #   DEBUG   #
+    #############
+
+# Debug functions
+def printDeclaredVars():
+    print("Declared Variables:")
+    for var in declaredVars:
+        print(f"- {var}")
+
+def printRolesAndStates():
+    print("Roles and States:")
+    for role, states in rolesAndStatesFromStateMachine.items():
+        print(f"Role: {role}")
+        for state in states:
+            print(f"  - State: {state}")
+
+print("--------")
+print("DEBUG\n")
+#printDeclaredVars()
+#printRolesAndStates()
