@@ -4,6 +4,8 @@ State: GotoPoint
     r.robotTimer = 0
     r.move(1)
     r.stop()
+    world.isPlayingLeft = 0
+    world.isStuck(robot)
     r.setObjective(r.x,r.y)
     r.setOrientationObjective(ball)
 

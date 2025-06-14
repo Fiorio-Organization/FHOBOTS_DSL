@@ -33,8 +33,8 @@ robotMethods = {"move", "stop", "setObjective", "setOrientationObjective"}
 robotAttributes = {"isStopped", "robotTimer", "x", "y","xObj", "yObj","role"}
 
 # class worldModel
-worldModelAttributes = {}
-worldModelMethods = {}
+worldModelAttributes = {"isPlayingLeft"}
+worldModelMethods = {"isStuck"}
 
     ########################
 #   Verificar Existencia de Role e Estado  #
@@ -110,6 +110,18 @@ def parameters():
         match("SEPARATOR")
         parameters()
 
+def checkWorldModelAttributes(attribute, line):
+    if not attribute in worldModelAttributes:
+        print("Semantic error on line " + str(line) +":",
+        "Attribute " + attribute + " doesn't exist in WorldModel")
+        sys.exit(1)
+
+def checkWorldModelMethods(method, line):
+    if not method in worldModelMethods:
+        print("Semantic error on line " + str(line) +":",
+        "Method " + method + " doesn't exist in WorldModel")
+        sys.exit(1)
+
 def checkRobotAttributes(attribute, line):
     if not attribute in robotAttributes:
         print("Semantic error on line " + str(line) +":",
@@ -126,6 +138,36 @@ def checkRobotMethods(method, line):
     #else:
         #print("Method " + attribute + " exists")
 
+def checkWorldModel():
+    global id_state
+    global cpp_file
+    match("WORLDMODEL")
+    lexema = lookAhead.value
+    match("IDENTIFIER")
+    cpp_file.write(
+        f"\tworldModelVss->{lexema}"
+    )
+    if lookAhead.type == "ASSIGNMENT_OPERATOR":
+        match("ASSIGNMENT_OPERATOR")
+        td = lookAhead.value
+        checkWorldModelAttributes(lexema, lookAhead.lineno)
+        dataType()
+        cpp_file.write(
+            f" = {td};\n"
+        )
+    elif lookAhead.type == "OPEN_PARENTHESIS":
+        match("OPEN_PARENTHESIS")
+        cpp_file.write(
+            f"("
+        )
+        
+        checkWorldModelMethods(lexema, lookAhead.lineno)            
+        parameters()
+        match("CLOSE_PARENTHESIS")
+        cpp_file.write(
+            f");\n"
+        )
+
 def checkRobot():
     global id_state
     global cpp_file
@@ -133,7 +175,7 @@ def checkRobot():
     lexeme = lookAhead.value
     match("IDENTIFIER")
     cpp_file.write(
-        f"robot->{lexeme}"
+        f"\trobot->{lexeme}"
     )
     if lookAhead.type == "ASSIGNMENT_OPERATOR":
         match("ASSIGNMENT_OPERATOR")
@@ -193,10 +235,16 @@ def dataType():
         match("ROBOT")
         match("IDENTIFIER")
 
+def checkBody():
+    if lookAhead.type == "ROBOT":
+        checkRobot()
+    elif lookAhead.type == "WORLDMODEL":
+        checkWorldModel()
+
 # corpoOnEntry > r.#Var = tipoDado | r.#Var(parametros) | ϵ
 def OnEntryBody():
     if lookAhead.type != "ONSTATE":
-        checkRobot()
+        checkBody()
         OnEntryBody()
 
 # onEntry > -> corpoOnEntry
@@ -256,7 +304,7 @@ def program():
         f"#include <iostream>\n\n"
         f"{id_state} * {id_state}::instance = NULL;\n\n"
         f"{id_state}::{id_state}(std::string stateLabel){{\n"
-        f"    this->stateLabel = stateLabel;\n"
+        f"\tthis->stateLabel = stateLabel;\n"
         f"}}\n\n"
     )
 
@@ -267,4 +315,4 @@ def program():
 
 print("--------")
 program()
-print("Sintaticamente correto!")
+print("Syntactically correct!")
