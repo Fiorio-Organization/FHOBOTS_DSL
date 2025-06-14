@@ -9,6 +9,22 @@ State: GotoPoint
     r.setObjective(r.x,r.y)
     r.setOrientationObjective(ball)
 
+    if 15>10 :
+        r.stop()
+
+        if r.isStopped == false:
+            world.isStuck(robot)  
+        else 
+            if r.isStopped != false:
+                r.stop()
+    else:
+        r.move(1)
+    
+    if 2 < 12:
+    
+    else if r.robotTimer >= 10:
+        r.setObjective(r.x,r.y)
+
 @
 
 <-  r.robotTimer = 0

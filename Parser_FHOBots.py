@@ -235,11 +235,37 @@ def dataType():
         match("ROBOT")
         match("IDENTIFIER")
 
+def checkComparison():
+    dataType()
+    match("COMPARISON_OPERATOR")
+    dataType()
+
+def checkComparisonStatement():
+    match("IF")
+    checkComparison()
+    match("COLON")
+    checkBody()
+
+    if lookAhead.type == "ELSE_IF":
+        match("ELSE_IF")
+        checkComparison()
+        match("COLON")
+        checkBody()
+
+    if lookAhead.type == "ELSE":
+        match("ELSE")
+        match("COLON")
+        checkBody()
+    
+    #match("END_IF")
+
 def checkBody():
     if lookAhead.type == "ROBOT":
         checkRobot()
     elif lookAhead.type == "WORLDMODEL":
         checkWorldModel()
+    elif lookAhead.type == "IF":
+        checkComparisonStatement()
 
 # corpoOnEntry > r.#Var = tipoDado | r.#Var(parametros) | ϵ
 def OnEntryBody():

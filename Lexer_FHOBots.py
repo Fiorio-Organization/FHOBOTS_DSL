@@ -11,14 +11,14 @@ tokens = (
     "ARITHMETIC_OPERATOR", "ASSIGNMENT_OPERATOR", "ROLE_DECLARATION",
     "STATE_TRANSITION", "OPEN_BRACKET", "CLOSE_BRACKET",
     "OPEN_PARENTHESIS", "CLOSE_PARENTHESIS", "SEPARATOR", "IDENTIFIER",
-    "BOOL", "FLOAT_DOUBLE", "INT", "CHAR", "STRING"
+    "BOOL", "FLOAT_DOUBLE", "INT", "CHAR", "STRING", "IF","ELIF", "ELSE", "END_IF", "COLON",
+    "COMPARISON_OPERATOR"
 )
 
 t_ONSTATE = "\@"
-t_ONEXIT = "\<\-"
-t_TRANSITION = "\<\>"
 t_ARITHMETIC_OPERATOR = "\+|\-|\*|\/|\%" 
 t_ASSIGNMENT_OPERATOR = "\="
+t_COMPARISON_OPERATOR = "\=\=|\!\=|\<\=|\>\=|\<|\>"
 t_OPEN_BRACKET = "\["
 t_CLOSE_BRACKET = "\]"
 t_OPEN_PARENTHESIS = "\("
@@ -59,10 +59,38 @@ def t_STATE_TRANSITION(t):
     "\$"
     return t
 
+def t_IF(t):
+    "if\s"
+    return t
+
+def t_ELSE_IF(t):
+    "else\s+if\s"
+    return t
+
+def t_ELSE(t):
+    "else"
+    return t
+
+def t_END_IF(t):
+    "endif\s"
+    return t
+
+def t_COLON(t):
+    ":"
+    return t
+
 # garantindo ordem de prioridade / 
 # evitando conflito com t_operador_aritmetico
 def t_ONENTRY(t):
     "\-\>"
+    return t
+
+def t_ONEXIT(t):
+    "\<\-"
+    return t
+
+def t_TRANSITION(t):
+    "\<\>"
     return t
 
 def t_BOOL(t) :
