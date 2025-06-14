@@ -79,8 +79,7 @@ def link_transition():
             new_role()
         elif lookAhead.type == "STATE_TRANSITION":
             transition_state()
-        elif lookAhead.type == "STATE_DECLARATION":
-            program()
+        
 
 # estado_de_transição > $#nome_do_estado [condição] [tratativas] link_transition 
 def transition_state():
@@ -263,16 +262,29 @@ def OnExitBody():
 
 # onExit > <- corpoOnExit
 def onExit():
+    global id_state
+    global cpp_file
     match("ONEXIT")
-    OnExitBody()
+    cpp_file.write(
+        f"void {id_state}::onExit(Robot * robot, IWorldModel * worldModel){{\n"
+    )
+    Body()
+    cpp_file.write(
+        f"}}\n\n"
+    )
 
 # onState > @ corpoOnState
 def onState():
+    global id_state
+    global cpp_file
     match("ONSTATE")
-    #corpoOnState()
-        #if lookAhead.type == "ROBOT"
-        #elif lookAhead.type == "WORLDMODEL"
-        #elif lookAhead.type == "IF"
+    cpp_file.write(
+        f"void {id_state}::onState(Robot * robot, IWorldModel * worldModel){{\n"
+    )
+    Body()
+    cpp_file.write(
+        f"}}\n\n"
+    )
 
 # tipoDado > bool | int | float_double | string | char | var
 def dataType():
@@ -332,12 +344,12 @@ def checkBody():
         checkComparisonStatement()
 
 # corpoOnEntry > r.#Var = tipoDado | r.#Var(parametros) | ϵ
-def OnEntryBody():
+def Body():
     if (lookAhead.type == "ROBOT" or lookAhead.type == "WORLDMODEL" or 
         lookAhead.type == "VARIABLE_DECLARATION" or lookAhead.type == "IDENTIFIER" or
         lookAhead.type == "IF"):
         checkBody()
-        OnEntryBody()
+        Body()
 
 # onEntry > -> corpoOnEntry
 def onEntry():
@@ -347,7 +359,7 @@ def onEntry():
     cpp_file.write(
         f"void {id_state}::onEntry(Robot * robot, IWorldModel * worldModel){{\n"
     )
-    OnEntryBody()
+    Body()
     cpp_file.write(
         f"}}\n\n"
     )
@@ -399,11 +411,25 @@ def program():
         f"\tthis->stateLabel = stateLabel;\n"
         f"}}\n\n"
     )
-
+    
     onEntry()
     onState()
     onExit()
     transition()
+    
+    cpp_file.write(
+        f"{id_state} * {id_state}::getInstance(std::string stateLabel){{\n"
+        f"\tif({id_state}::instance == NULL)\n"
+        f"\t\t{id_state}::instance = new {id_state}(stateLabel);\n\n"
+        f"\treturn {id_state}::instance;\n"
+        f"}}"
+    )
+
+    if lookAhead != None:
+        if lookAhead.type == "STATE_DECLARATION":
+            program()
+
+
 
 print("--------")
 program()

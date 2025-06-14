@@ -16,7 +16,8 @@ State: GotoPoint
         r.stop()
 
         if r.isStopped == false:
-            world.isStuck(robot)  
+            if world.isPlayingLeft == true:
+                world.isStuck(robot)  
         else 
             if r.isStopped != false:
                 r.stop()
@@ -28,9 +29,21 @@ State: GotoPoint
     else if r.robotTimer >= 10:
         r.setObjective(r.x,r.y)
 
-@
+@   if 15>10 :
+        r.stop()
 
-<-  r.robotTimer = 0
+        if r.isStopped == false:
+            if world.isPlayingLeft == true:
+                world.isStuck(robot)  
+        else 
+            if r.isStopped != false:
+                r.stop()
+    else:
+        r.move(1)
+
+<-  r.isStopped = false
+    varY = x
+    x = 0
 
 <>
     Role: Common

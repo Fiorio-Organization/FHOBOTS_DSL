@@ -10,3 +10,15 @@ GotoBall::GotoBall(std::string stateLabel){
 void GotoBall::onEntry(Robot * robot, IWorldModel * worldModel){
 }
 
+void GotoBall::onState(Robot * robot, IWorldModel * worldModel){
+}
+
+void GotoBall::onExit(Robot * robot, IWorldModel * worldModel){
+}
+
+GotoBall * GotoBall::getInstance(std::string stateLabel){
+	if(GotoBall::instance == NULL)
+		GotoBall::instance = new GotoBall(stateLabel);
+
+	return GotoBall::instance;
+}

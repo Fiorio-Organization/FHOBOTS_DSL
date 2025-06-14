@@ -26,4 +26,22 @@ void GotoPoint::onEntry(Robot * robot, IWorldModel * worldModel){
 	robot->setObjective();
 }
 
-	robot->robotTimer = 0;
+void GotoPoint::onState(Robot * robot, IWorldModel * worldModel){
+	robot->stop();
+	worldModelVss->isStuck();
+	robot->stop();
+	robot->move();
+}
+
+void GotoPoint::onExit(Robot * robot, IWorldModel * worldModel){
+	robot->isStopped = false;
+	varY = x;
+	x = 0;
+}
+
+GotoPoint * GotoPoint::getInstance(std::string stateLabel){
+	if(GotoPoint::instance == NULL)
+		GotoPoint::instance = new GotoPoint(stateLabel);
+
+	return GotoPoint::instance;
+}
