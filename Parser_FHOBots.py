@@ -47,9 +47,9 @@ def stateExists(state):
             return True
     return False
 
-def roleExists(lexema):
+def roleExists(lexeme):
     global rolesAndStatesFromStateMachine
-    return lexema in rolesAndStatesFromStateMachine
+    return lexeme in rolesAndStatesFromStateMachine
     
 def transitionStateExists(role, state):
     global rolesAndStatesFromStateMachine
@@ -69,18 +69,18 @@ def match(expected):
     sys.exit(1) #1 indica que houve erro
 
 # link_transition > Novo_papel | estado_de_transicao | programa | ϵ
-def link_transicao():
+def link_transition():
     global lookAhead
     if lookAhead != None: # se não é fim de arquivo (ϵ)
         if lookAhead.type == "ROLE_DECLARATION":
-            novo_papel()
+            new_role()
         elif lookAhead.type == "STATE_TRANSITION":
-            estado_de_transicao()
+            transition_state()
         elif lookAhead.type == "STATE_DECLARATION":
-            programa()
+            program()
 
 # estado_de_transição > $#nome_do_estado [condição] [tratativas] link_transition 
-def estado_de_transicao():
+def transition_state():
     match("STATE_TRANSITION")
     match("IDENTIFIER")
     match("OPEN_BRACKET")
@@ -89,26 +89,26 @@ def estado_de_transicao():
     match("OPEN_BRACKET")
     #tratativa()
     match("CLOSE_BRACKET")
-    link_transicao()
+    link_transition()
 
 # Novo_papel > Role: #papel_do_robo estado__de_transição
-def novo_papel():
+def new_role():
     match("ROLE_DECLARATION")
     match("IDENTIFIER")
-    estado_de_transicao()
+    transition_state()
 
 # transition > <> Novo_papel
 def transition():
     match("TRANSITION")
-    novo_papel()
+    new_role()
 
 # parametros > , #var parametros | ϵ
-def parametros():
+def parameters():
     m = lookAhead.value
-    tipoDado()
+    dataType()
     if lookAhead.type == "SEPARATOR":
         match("SEPARATOR")
-        parametros()
+        parameters()
 
 def checkRobotAttributes(attribute, line):
     if not attribute in robotAttributes:
@@ -126,46 +126,46 @@ def checkRobotMethods(method, line):
     #else:
         #print("Method " + attribute + " exists")
 
-def checkRobotAttributesAndMethods():
+def checkRobot():
     global id_state
-    global arquivo_cpp
+    global cpp_file
     match("ROBOT")
-    lexema = lookAhead.value
+    lexeme = lookAhead.value
     match("IDENTIFIER")
-    arquivo_cpp.write(
-    f"robot->{lexema}"
+    cpp_file.write(
+        f"robot->{lexeme}"
     )
     if lookAhead.type == "ASSIGNMENT_OPERATOR":
         match("ASSIGNMENT_OPERATOR")
         td = lookAhead.value
-        checkRobotAttributes(lexema, lookAhead.lineno)
-        tipoDado()
-        arquivo_cpp.write(
-        f" = {td};\n"
+        checkRobotAttributes(lexeme, lookAhead.lineno)
+        dataType()
+        cpp_file.write(
+            f" = {td};\n"
         )
     
     elif lookAhead.type == "OPEN_PARENTHESIS":
         match("OPEN_PARENTHESIS")
-        arquivo_cpp.write(
-        f"("
+        cpp_file.write(
+            f"("
         )
         
-        checkRobotMethods(lexema, lookAhead.lineno)            
-        parametros()
+        checkRobotMethods(lexeme, lookAhead.lineno)            
+        parameters()
         match("CLOSE_PARENTHESIS")
-        arquivo_cpp.write(
-        f");\n"
+        cpp_file.write(
+            f");\n"
         )
 
-def corpoOnExit():
+def OnExitBody():
     if lookAhead.type != "TRANSITION":
-        checkRobotAttributesAndMethods()
-        corpoOnExit()
+        checkRobot()
+        OnExitBody()
 
 # onExit > <- corpoOnExit
 def onExit():
     match("ONEXIT")
-    corpoOnExit()
+    OnExitBody()
 
 # onState > @ corpoOnState
 def onState():
@@ -176,7 +176,7 @@ def onState():
         #elif lookAhead.type == "IF"
 
 # tipoDado > bool | int | float_double | string | char | var
-def tipoDado():
+def dataType():
     if lookAhead.type == "BOOL":
         match("BOOL")
     elif lookAhead.type == "INT":
@@ -194,26 +194,26 @@ def tipoDado():
         match("IDENTIFIER")
 
 # corpoOnEntry > r.#Var = tipoDado | r.#Var(parametros) | ϵ
-def corpoOnEntry():
+def OnEntryBody():
     if lookAhead.type != "ONSTATE":
-        checkRobotAttributesAndMethods()
-        corpoOnEntry()
+        checkRobot()
+        OnEntryBody()
 
 # onEntry > -> corpoOnEntry
 def onEntry():
     global id_state
-    global arquivo_cpp
+    global cpp_file
     match("ONENTRY")
-    arquivo_cpp.write(
+    cpp_file.write(
         f"void {id_state}::onEntry(Robot * robot, IWorldModel * worldModel){{\n"
     )
-    corpoOnEntry()
-    arquivo_cpp.write(
-    f"}}\n\n"
+    OnEntryBody()
+    cpp_file.write(
+        f"}}\n\n"
     )
 
 # Programa > State: #Nome_do_Estado onEntry onState onExit transition
-def programa():
+def program():
     global id_role
     id_role = lookAhead.value
     id_role_name = id_role[0].lower() + id_role[1:]
@@ -227,11 +227,11 @@ def programa():
 
     match("IDENTIFIER")
 
-    global arquivo_hpp
+    global hpp_file
     # Garante que o diretório exista
     os.makedirs("header", exist_ok=True)
-    arquivo_hpp = open("header/" + id_state_name + ".hpp", "w")
-    arquivo_hpp.write(
+    hpp_file = open("header/" + id_state_name + ".hpp", "w")
+    hpp_file.write(
         f"#ifndef {id_state_header}_HPP\n"
         f"#define {id_state_header}_HPP\n\n"
         f"class {id_state}: public State{{\n"
@@ -248,10 +248,10 @@ def programa():
         f"#endif"
     )
 
-    global arquivo_cpp
+    global cpp_file
     os.makedirs("src", exist_ok=True)
-    arquivo_cpp = open("src/" + id_state_name + ".cpp", "w")
-    arquivo_cpp.write(
+    cpp_file = open("src/" + id_state_name + ".cpp", "w")
+    cpp_file.write(
         f"#include \"../../header/common/{id_state_name}.hpp\"\n"
         f"#include <iostream>\n\n"
         f"{id_state} * {id_state}::instance = NULL;\n\n"
@@ -266,5 +266,5 @@ def programa():
     transition()
 
 print("--------")
-programa()
+program()
 print("Sintaticamente correto!")
