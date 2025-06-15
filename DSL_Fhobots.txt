@@ -1,0 +1,24 @@
+State: ShotToGoal
+
+->  r.move()
+    r.resetRobotTimers()
+
+@   r.setObjective(world.ball)
+    if world.isStuckAtByline(robot) == true{
+        r.incrementRobotTimerStuckWithWall()
+    }
+    
+<-  r.move()
+
+<>  Role: Common
+    $GotoBall [world.distanceTo(robot, world.ball) > 0.15] []
+
+    $SpinATK [world.isAtAtkPosition(world.ball) == true and world.isNearBall(robot) == true and (r.y > 0.4 or r.y < 0.4)] []
+
+    $IsStuckAtByline [r.robotTimerSlidingOnTheWall>80] []
+
+    $IsNotMoving [r.robotTimer > 100] []
+
+    $BackOff [world.isPlayingLeft == true and r.x < 0.65 or
+        world.isPlayingLeft == false and r.x > 0.65 or
+        world.isNearToDeffenseArea(robot) == true] []

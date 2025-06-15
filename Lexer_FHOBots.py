@@ -27,9 +27,12 @@ t_OPEN_CURLY_BRACE = "\{"
 t_CLOSE_CURLY_BRACE = "\}"
 t_SEPARATOR = "\,"
 t_IDENTIFIER = "[A-Za-z]\w*"
-t_FLOAT_DOUBLE = "\d+\.\d+"
 t_CHAR = "\'[A-Za-z0-9]\'"
 t_STRING = "\"\w*\""
+
+def t_FLOAT_DOUBLE(t):
+    r"\d+\.\d+"
+    return t
 
 def t_NEXT_LINE(t):
     r"\n"
@@ -116,7 +119,8 @@ def initializeLexer(file):
 def nextToken():
     return l.token() #lê o proximo token
 
-file = open('estados_teste.txt')
+#file = open('estados_teste.txt')
+file = open('DSL_Fhobots.txt')
 content = file.read()
 print()
 

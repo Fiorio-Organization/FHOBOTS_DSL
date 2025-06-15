@@ -7,7 +7,8 @@ import sys
 import xml.etree.ElementTree as ET # xml
 import os # pasta de arquivos
 
-lexer = initializeLexer("estados_teste.txt")
+#lexer = initializeLexer("estados_teste.txt")
+lexer = initializeLexer("DSL_Fhobots.txt")
 
 # pega o proximo token
 lookAhead = lexer.token() # Inicialiando o lookAhead
@@ -33,12 +34,12 @@ rolesAndStates ={"roles": list(rolesAndStatesFromStateMachine.keys()),
                  "states": [state for states in rolesAndStatesFromStateMachine.values() for state in states]}
 
 # class robot
-robotMethods = {"move", "stop", "setObjective", "setOrientationObjective"}
-robotAttributes = {"isStopped", "robotTimer", "x", "y","xObj", "yObj","role"}
+robotMethods = {"move", "stop", "setObjective", "setOrientationObjective", "resetRobotTimers", "incrementRobotTimerStuckWithWall"}
+robotAttributes = {"isStopped", "robotTimer", "x", "y","xObj", "yObj","role", "robotTimerSlidingOnTheWall"}
 
 # class worldModel
-worldModelAttributes = {"isPlayingLeft"}
-worldModelMethods = {"isStuck"}
+worldModelAttributes = {"isPlayingLeft", "ball"}
+worldModelMethods = {"isStuck", "isStuckAtByline", "isSlidingOnTheWall", "isAtAtkPosition", "isNearBall", "distanceTo", "isNearToDeffenseArea"}
 
 # declared vars
 declaredVars = {}
@@ -145,16 +146,23 @@ def transition():
         f"void {id_state}::transition(Robot * robot, IWorldModel * worldModel){{\n"
     )
     new_role()
-    '''cpp_file.write(
+    cpp_file.write(
         f"}}\n\n"
-    )'''
+    )
 
 # parametros > , #var parametros | ϵ
 def parameters():
     m = lookAhead.value
+    if lookAhead.type == "IDENTIFIER" or lookAhead.type == "BOOL" or lookAhead.type == "INT" or lookAhead.type == "FLOAT_DOUBLE" or lookAhead.type == "STRING" or lookAhead.type == "CHAR":
+        cpp_file.write(
+            f"{m}"
+        )
     dataType()
     if lookAhead.type == "SEPARATOR":
         match("SEPARATOR")
+        cpp_file.write(
+            f", "
+        )    
         parameters()
 
 def checkIdentifier():
@@ -256,13 +264,13 @@ def checkWorldModel():
 def checkRobotAttributes(attribute, line):
     if not attribute in robotAttributes:
         print("Semantic error on line " + str(line) +":",
-        "Attribute " + attribute + " doesn't exist")
+        "Attribute " + attribute + " doesn't exist in Robot")
         sys.exit(1)
 
 def checkRobotMethods(method, line):
     if not method in robotMethods:
         print("Semantic error on line " + str(line) +":",
-        "Method " + method + " doesn't exist")
+        "Method " + method + " doesn't exist in Robot")
         sys.exit(1)
 
 def checkRobot():
@@ -343,9 +351,15 @@ def dataType():
 
 def checkIfChaining():
     if lookAhead.type == "IF_SEP":
-        cpp_file.write(
-            f" {lookAhead.value} "
-        )
+        if lookAhead.value == "and":
+            cpp_file.write(
+                f" && "
+            )
+        else:
+            cpp_file.write(
+                f" || "
+            )
+        
         match("IF_SEP")
         checkComparison()
 
@@ -361,7 +375,7 @@ def checkComparison():
             f")"
         )
     else:
-        if lookAhead.type == "IDENTIFIER" or lookAhead.type == "ROBOT" or lookAhead.type == "WORLDMODEL" or lookAhead.type == "BOOL" or lookAhead.type == "INT" or lookAhead.type == "FLOAT_DOUBLE" or lookAhead.type == "STRING" or lookAhead.type == "CHAR" :
+        if lookAhead.type == "IDENTIFIER" or lookAhead.type == "BOOL" or lookAhead.type == "INT" or lookAhead.type == "FLOAT_DOUBLE" or lookAhead.type == "STRING" or lookAhead.type == "CHAR" :
             cpp_file.write(
                 f"{lookAhead.value}"
             )
@@ -371,7 +385,7 @@ def checkComparison():
                 f" {lookAhead.value} "
             )
         match("COMPARISON_OPERATOR")
-        if lookAhead.type == "IDENTIFIER" or lookAhead.type == "ROBOT" or lookAhead.type == "WORLDMODEL" or lookAhead.type == "BOOL" or lookAhead.type == "INT" or lookAhead.type == "FLOAT_DOUBLE" or lookAhead.type == "STRING" or lookAhead.type == "CHAR" :
+        if lookAhead.type == "IDENTIFIER" or lookAhead.type == "BOOL" or lookAhead.type == "INT" or lookAhead.type == "FLOAT_DOUBLE" or lookAhead.type == "STRING" or lookAhead.type == "CHAR" :
             cpp_file.write(
                 f"{lookAhead.value}"
             )
@@ -576,4 +590,4 @@ print("--------")
 print("DEBUG\n")
 #printDeclaredVars()
 #printRolesAndStates()
-printRolesAndStatesList()
+#printRolesAndStatesList()
