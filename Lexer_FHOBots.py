@@ -12,7 +12,7 @@ tokens = (
     "STATE_TRANSITION", "OPEN_BRACKET", "CLOSE_BRACKET",
     "OPEN_PARENTHESIS", "CLOSE_PARENTHESIS", "SEPARATOR", "IDENTIFIER",
     "VARIABLE_DECLARATION", "BOOL", "FLOAT_DOUBLE", "INT", "CHAR", "STRING", 
-    "IF","ELIF", "ELSE", "END_IF", "COLON", "COMPARISON_OPERATOR"
+    "IF","ELIF", "ELSE", "IF_SEP", "COLON", "COMPARISON_OPERATOR"
 )
 
 t_ONSTATE = "\@"
@@ -75,8 +75,8 @@ def t_ELSE(t):
     "else"
     return t
 
-def t_END_IF(t):
-    "endif\s"
+def t_IF_SEP(t):
+    "and|or"
     return t
 
 def t_COLON(t):

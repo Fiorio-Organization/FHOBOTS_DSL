@@ -86,14 +86,16 @@ def transition_state():
     match("STATE_TRANSITION")
     match("IDENTIFIER")
     match("OPEN_BRACKET")
-    #condicao()
+    if lookAhead.type != "CLOSE_BRACKET":
+        checkComparison()
     match("CLOSE_BRACKET")
     match("OPEN_BRACKET")
-    #tratativa()
+    if lookAhead.type != "CLOSE_BRACKET":
+        Body()
     match("CLOSE_BRACKET")
     link_transition()
 
-# Novo_papel > Role: #papel_do_robo estado__de_transição
+# Novo_papel > Role: #papel_do_robo estado_de_transição
 def new_role():
     match("ROLE_DECLARATION")
     match("IDENTIFIER")
@@ -213,16 +215,12 @@ def checkRobotAttributes(attribute, line):
         print("Semantic error on line " + str(line) +":",
         "Attribute " + attribute + " doesn't exist")
         sys.exit(1)
-    #else:
-        #print("Attribute " + attribute + " exists")
 
 def checkRobotMethods(method, line):
     if not method in robotMethods:
         print("Semantic error on line " + str(line) +":",
         "Method " + method + " doesn't exist")
         sys.exit(1)
-    #else:
-        #print("Method " + attribute + " exists")
 
 def checkRobot():
     global id_state
@@ -301,16 +299,25 @@ def dataType():
     elif lookAhead.type == "IDENTIFIER":
         match("IDENTIFIER")
     elif lookAhead.type == "ROBOT": # r.attribute
-        match("ROBOT")
-        match("IDENTIFIER")
+        checkRobot()
     elif lookAhead.type == "WORLDMODEL": # world.attribute
-        match("WORLDMODEL")
-        match("IDENTIFIER")
+        checkWorldModel()
+
+def checkIfChaining():
+    if lookAhead.type == "IF_SEP":
+        match("IF_SEP")
+        checkComparison()
 
 def checkComparison():
-    dataType()
-    match("COMPARISON_OPERATOR")
-    dataType()
+    if lookAhead.type == "OPEN_PARENTHESIS":
+        match("OPEN_PARENTHESIS")
+        checkComparison()
+        match("CLOSE_PARENTHESIS")
+    else:
+        dataType()
+        match("COMPARISON_OPERATOR")
+        dataType()
+    checkIfChaining()
 
 def checkComparisonStatement():
     match("IF")
@@ -328,8 +335,6 @@ def checkComparisonStatement():
         match("ELSE")
         match("COLON")
         checkBody()
-    
-    #match("END_IF")
 
 def checkBody():
     if lookAhead.type == "ROBOT":
@@ -435,8 +440,6 @@ def program():
     if lookAhead != None:
         if lookAhead.type == "STATE_DECLARATION":
             program()
-
-
 
 print("--------")
 program()

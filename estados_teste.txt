@@ -12,7 +12,7 @@ State: GotoPoint
     r.setObjective(r.x,r.y)
     r.setOrientationObjective(ball)
 
-    if 15>10 :
+    if ((15>10 and 'a' != x) or world.isStuck(robot) == r.stop()):
         r.stop()
 
         if r.isStopped == false:
@@ -47,12 +47,18 @@ State: GotoPoint
 
 <>
     Role: Common
-    $Backoff [] []
+    $Backoff [r.isStopped == true or 
+    world.isStuck(robot) != false] []
 
     Role: Goalkeeper
-    $SpinGK [] []
+    $SpinGK [r.isStopped == true] 
+    [
+        float varX
+        x = varX
+        world.isPlayingLeft = 1
+    ]
 
-    $GotoBall [] []
+    $GotoBall [r.isStopped == true] [x = varY]
 
 State: GotoBall
 
