@@ -77,12 +77,23 @@ void GotoPoint::onExit(Robot * robot, IWorldModel * worldModel){
 }
 
 void GotoPoint::transition(Robot * robot, IWorldModel * worldModel){
-r.robot->isStopped == true or world.worldModelVss->isStuck() != falser.robot->isStopped == true	float varX;
-	x = varX;
-	worldModelVss->isPlayingLeft = 1;
-r.robot->isStopped == true	x = varY;
+	if(r.robot->isStopped == true or world.worldModelVss->isStuck() != false){
+	return StateFactory::getInstance("Backoff");
 }
 
+if(robot->role == GoalkeeperRole::getInstance()) {
+	if(r.robot->isStopped == true){
+	float varX;
+	x = varX;
+	worldModelVss->isPlayingLeft = 1;
+	return StateFactory::getInstance("SpinGK");
+}
+	if(r.robot->isStopped == true){
+	x = varY;
+	return StateFactory::getInstance("GotoBall");
+}
+}
+}
 GotoPoint * GotoPoint::getInstance(std::string stateLabel){
 	if(GotoPoint::instance == NULL)
 		GotoPoint::instance = new GotoPoint(stateLabel);

@@ -1,52 +1,59 @@
 <?xml version='1.0' encoding='utf-8'?>
 <states>
-  <category name="attacker">
-    <state name="seekBallATK" />
-    <state name="shotToGoal" />
-    <state name="spinATK" />
+  <category name="Attacker">
+    <state name="SeekBallATK" />
+    <state name="ShotToGoal" />
+    <state name="SpinATK" />
   </category>
-  <category name="common">
-    <state name="backoff" />
-    <state name="gotoBall" />
-    <state name="gotoPoint" />
-    <state name="idlestate" />
-    <state name="isNotMoving" />
-    <state name="isSlidingOnTheWall" />
-    <state name="orientationtoPoint" />
-    <state name="spin" />
+  <category name="AttackerCentral">
+    <state name="ATC_SeekBall" />
+    <state name="ATC_ShotToGoal" />
+    <state name="ATC_Spin" />
   </category>
-  <category name="defender">
-    <state name="clearBall" />
-    <state name="seekBall" />
-    <state name="shotBallDF" />
+  <category name="Common">
+    <state name="Backoff" />
+    <state name="GotoBall" />
+    <state name="GotoPoint" />
+    <state name="Idlestate" />
+    <state name="IsNotMoving" />
+    <state name="IsSlidingOnTheWall" />
+    <state name="IsStuckAtByline" />
+    <state name="OrientationtoPoint" />
+    <state name="Spin" />
   </category>
-  <category name="defenderCentral">
-    <state name="DFC_gotoPoint" />
-    <state name="DFC_orientationtoPoint" />
-    <state name="DFC_seekBall" />
-    <state name="DFC_spin" />
+  <category name="Defender">
+    <state name="ClearBall" />
+    <state name="SeekBall" />
+    <state name="ShotBallDF" />
   </category>
-  <category name="defenderLeft">
-    <state name="DFL_gotoPoint" />
-    <state name="DFL_orientationtoPoint" />
-    <state name="DFL_seekBall" />
-    <state name="DFL_spin" />
+  <category name="DefenderCentral">
+    <state name="DFC_ClearSideBall" />
+    <state name="DFC_GotoPoint" />
+    <state name="DFC_OrientationtoPoint" />
+    <state name="DFC_SeekBall" />
+    <state name="DFC_Spin" />
   </category>
-  <category name="defenderRight">
-    <state name="DFR_gotoPoint" />
-    <state name="DFR_orientationtoPoint" />
-    <state name="DFR_seekBall" />
-    <state name="DFR_spin" />
+  <category name="DefenderLeft">
+    <state name="DFL_GotoPoint" />
+    <state name="DFL_OrientationtoPoint" />
+    <state name="DFL_SeekBall" />
+    <state name="DFL_Spin" />
   </category>
-  <category name="game_events">
-    <state name="goalKick" />
-    <state name="penalty" />
-    <state name="penaltyGK" />
+  <category name="DefenderRight">
+    <state name="DFR_GotoPoint" />
+    <state name="DFR_OrientationtoPoint" />
+    <state name="DFR_SeekBall" />
+    <state name="DFR_Spin" />
   </category>
-  <category name="goalkeeper">
-    <state name="backoffGK" />
-    <state name="clearSideBallGK" />
-    <state name="seekBallGK" />
-    <state name="spinGK" />
+  <category name="Game_events">
+    <state name="GoalKick" />
+    <state name="Penalty" />
+    <state name="PenaltyGK" />
+  </category>
+  <category name="Goalkeeper">
+    <state name="BackoffGK" />
+    <state name="ClearSideBallGK" />
+    <state name="SeekBallGK" />
+    <state name="SpinGK" />
   </category>
 </states>

@@ -17,8 +17,11 @@ void GotoBall::onExit(Robot * robot, IWorldModel * worldModel){
 }
 
 void GotoBall::transition(Robot * robot, IWorldModel * worldModel){
-}
 
+if(robot->role == DefenderRole::getInstance()) {
+	return StateFactory::getInstance("SeekBallDEF");
+}
+}
 GotoBall * GotoBall::getInstance(std::string stateLabel){
 	if(GotoBall::instance == NULL)
 		GotoBall::instance = new GotoBall(stateLabel);

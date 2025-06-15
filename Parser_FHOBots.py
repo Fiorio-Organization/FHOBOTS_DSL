@@ -28,6 +28,10 @@ def loadRolesAndStatesFromXML(xml_file):
 rolesAndStatesFromStateMachine = loadRolesAndStatesFromXML("states.xml")
 #print(rolesAndStatesFromStateMachine)
 
+# lista com Roles e States
+rolesAndStates ={"roles": list(rolesAndStatesFromStateMachine.keys()),
+                 "states": [state for states in rolesAndStatesFromStateMachine.values() for state in states]}
+
 # class robot
 robotMethods = {"move", "stop", "setObjective", "setOrientationObjective"}
 robotAttributes = {"isStopped", "robotTimer", "x", "y","xObj", "yObj","role"}
@@ -84,22 +88,55 @@ def link_transition():
 # estado_de_transição > $#nome_do_estado [condição] [tratativas] link_transition 
 def transition_state():
     match("STATE_TRANSITION")
+    id_state = lookAhead.value
     match("IDENTIFIER")
     match("OPEN_BRACKET")
     if lookAhead.type != "CLOSE_BRACKET":
+        cpp_file.write(
+            f"\tif("
+        )
         checkComparison()
+        cpp_file.write(
+            f"){{\n"
+        )
     match("CLOSE_BRACKET")
     match("OPEN_BRACKET")
     if lookAhead.type != "CLOSE_BRACKET":
         Body()
     match("CLOSE_BRACKET")
+
+    cpp_file.write(
+        f"\treturn StateFactory::getInstance(\"{id_state}\");\n"
+    )
+
+    cpp_file.write(
+        f"}}\n"
+    )
     link_transition()
 
 # Novo_papel > Role: #papel_do_robo estado_de_transição
 def new_role():
+    global id_role
+    global id_state
+    global cpp_file
     match("ROLE_DECLARATION")
+    id_role = lookAhead.value
+    if not roleExists(id_role):
+        print("Semantic error on line " + str(lookAhead.lineno) +":",
+        "Role " + id_role + " not declared in state " + id_state)
+        sys.exit(1)
+    
+    if not id_role == "Common":
+        cpp_file.write(
+            f"\nif(robot->role == {id_role}Role::getInstance()) {{\n"
+        )
+    
     match("IDENTIFIER")
     transition_state()
+    if not id_role == "Common":
+        cpp_file.write(
+            f"}}\n"
+        )
 
 # transition > <> Novo_papel
 def transition():
@@ -108,9 +145,9 @@ def transition():
         f"void {id_state}::transition(Robot * robot, IWorldModel * worldModel){{\n"
     )
     new_role()
-    cpp_file.write(
+    '''cpp_file.write(
         f"}}\n\n"
-    )
+    )'''
 
 # parametros > , #var parametros | ϵ
 def parameters():
@@ -528,7 +565,15 @@ def printRolesAndStates():
         for state in states:
             print(f"  - State: {state}")
 
+def printRolesAndStatesList():
+    print("Roles and States List:")
+    for role in rolesAndStates["roles"]:
+        print(f"Role: {role}")
+        for state in rolesAndStatesFromStateMachine[role]:
+            print(f"  - State: {state}")
+
 print("--------")
 print("DEBUG\n")
 #printDeclaredVars()
 #printRolesAndStates()
+printRolesAndStatesList()
