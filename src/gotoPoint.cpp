@@ -17,22 +17,57 @@ void GotoPoint::onEntry(Robot * robot, IWorldModel * worldModel){
 	x = 0;
 	worldModelVss->isPlayingLeft = 0;
 	worldModelVss->isStuck();
-	robot->setObjective(	robot->x	robot->y);
+	robot->setObjective(robot->xrobot->y);
 	robot->setOrientationObjective();
+	if(((15 > 10 and 'a' != x) or world.worldModelVss->isStuck() == r.robot->stop())){
+	robot->stop();
+	if(r.robot->isStopped == false){
+	if(world.worldModelVss->isPlayingLeft == true){
 	worldModelVss->isStuck();
+
+	}
+
+	}
+	else if(r.robot->isStopped != false){
 	robot->stop();
-	robot->stop();
-	robot->isStopped	worldModelVss->isPlayingLeft	worldModelVss->isStuck();
-	robot->isStopped	robot->stop();
+
+	}
+
+	}
+	else{
 	robot->move();
-	robot->robotTimer	robot->setObjective(	robot->x	robot->y);
+
+	}
+	if(2 < 12){
+
+	}
+	else if(r.robot->robotTimer >= 10){
+	robot->setObjective(robot->xrobot->y);
+
+	}
 }
 
 void GotoPoint::onState(Robot * robot, IWorldModel * worldModel){
+	if(15 > 10){
 	robot->stop();
-	robot->isStopped	worldModelVss->isPlayingLeft	worldModelVss->isStuck();
-	robot->isStopped	robot->stop();
+	worldModelVss->isPlayingLeft = 0;
+	if(r.robot->isStopped == false){
+	if(world.worldModelVss->isPlayingLeft == true){
+	worldModelVss->isStuck();
+
+	}
+
+	}
+	else if(r.robot->isStopped != false){
+	robot->stop();
+
+	}
+
+	}
+	else{
 	robot->move();
+
+	}
 }
 
 void GotoPoint::onExit(Robot * robot, IWorldModel * worldModel){
@@ -41,11 +76,13 @@ void GotoPoint::onExit(Robot * robot, IWorldModel * worldModel){
 	x = 0;
 }
 
-	robot->isStopped	worldModelVss->isStuck();
-	robot->isStopped	float varX;
+void GotoPoint::transition(Robot * robot, IWorldModel * worldModel){
+r.robot->isStopped == true or world.worldModelVss->isStuck() != falser.robot->isStopped == true	float varX;
 	x = varX;
 	worldModelVss->isPlayingLeft = 1;
-	robot->isStopped	x = varY;
+r.robot->isStopped == true	x = varY;
+}
+
 GotoPoint * GotoPoint::getInstance(std::string stateLabel){
 	if(GotoPoint::instance == NULL)
 		GotoPoint::instance = new GotoPoint(stateLabel);

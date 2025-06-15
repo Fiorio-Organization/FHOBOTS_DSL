@@ -104,7 +104,13 @@ def new_role():
 # transition > <> Novo_papel
 def transition():
     match("TRANSITION")
+    cpp_file.write(
+        f"void {id_state}::transition(Robot * robot, IWorldModel * worldModel){{\n"
+    )
     new_role()
+    cpp_file.write(
+        f"}}\n\n"
+    )
 
 # parametros > , #var parametros | ϵ
 def parameters():
@@ -187,7 +193,7 @@ def checkWorldModel():
     lexema = lookAhead.value
     match("IDENTIFIER")
     cpp_file.write(
-        f"\tworldModelVss->{lexema}"
+        f"worldModelVss->{lexema}"
     )
     if lookAhead.type == "ASSIGNMENT_OPERATOR":
         match("ASSIGNMENT_OPERATOR")
@@ -195,7 +201,7 @@ def checkWorldModel():
         checkWorldModelAttributes(lexema, lookAhead.lineno)
         dataType()
         cpp_file.write(
-            f" = {td};\n"
+            f" = {td}"
         )
     elif lookAhead.type == "OPEN_PARENTHESIS":
         match("OPEN_PARENTHESIS")
@@ -207,7 +213,7 @@ def checkWorldModel():
         parameters()
         match("CLOSE_PARENTHESIS")
         cpp_file.write(
-            f");\n"
+            f")"
         )
 
 def checkRobotAttributes(attribute, line):
@@ -229,7 +235,7 @@ def checkRobot():
     lexeme = lookAhead.value
     match("IDENTIFIER")
     cpp_file.write(
-        f"\trobot->{lexeme}"
+        f"robot->{lexeme}"
     )
     if lookAhead.type == "ASSIGNMENT_OPERATOR":
         match("ASSIGNMENT_OPERATOR")
@@ -237,7 +243,7 @@ def checkRobot():
         checkRobotAttributes(lexeme, lookAhead.lineno)
         dataType()
         cpp_file.write(
-            f" = {td};\n"
+            f" = {td}"
         )
     
     elif lookAhead.type == "OPEN_PARENTHESIS":
@@ -250,13 +256,8 @@ def checkRobot():
         parameters()
         match("CLOSE_PARENTHESIS")
         cpp_file.write(
-            f");\n"
+            f")"
         )
-
-def OnExitBody():
-    if lookAhead.type != "TRANSITION":
-        checkRobot()
-        OnExitBody()
 
 # onExit > <- corpoOnExit
 def onExit():
@@ -305,36 +306,92 @@ def dataType():
 
 def checkIfChaining():
     if lookAhead.type == "IF_SEP":
+        cpp_file.write(
+            f" {lookAhead.value} "
+        )
         match("IF_SEP")
         checkComparison()
 
 def checkComparison():
     if lookAhead.type == "OPEN_PARENTHESIS":
         match("OPEN_PARENTHESIS")
+        cpp_file.write(
+            f"("
+        )
         checkComparison()
         match("CLOSE_PARENTHESIS")
+        cpp_file.write(
+            f")"
+        )
     else:
+        if lookAhead.type == "IDENTIFIER" or lookAhead.type == "ROBOT" or lookAhead.type == "WORLDMODEL" or lookAhead.type == "BOOL" or lookAhead.type == "INT" or lookAhead.type == "FLOAT_DOUBLE" or lookAhead.type == "STRING" or lookAhead.type == "CHAR" :
+            cpp_file.write(
+                f"{lookAhead.value}"
+            )
         dataType()
+        if lookAhead.type == "COMPARISON_OPERATOR":
+            cpp_file.write(
+                f" {lookAhead.value} "
+            )
         match("COMPARISON_OPERATOR")
+        if lookAhead.type == "IDENTIFIER" or lookAhead.type == "ROBOT" or lookAhead.type == "WORLDMODEL" or lookAhead.type == "BOOL" or lookAhead.type == "INT" or lookAhead.type == "FLOAT_DOUBLE" or lookAhead.type == "STRING" or lookAhead.type == "CHAR" :
+            cpp_file.write(
+                f"{lookAhead.value}"
+            )
         dataType()
     checkIfChaining()
 
 def checkComparisonStatement():
     match("IF")
+    global cpp_file
+    cpp_file.write(
+        f"\tif("
+    )
     checkComparison()
-    match("COLON")
-    checkBody()
+    match("OPEN_CURLY_BRACE")
+    cpp_file.write(
+        f"){{\n"
+    )
+
+    Body()
+    
+    match("CLOSE_CURLY_BRACE")
+    cpp_file.write(
+        f"\n\t}}\n"
+    )
 
     if lookAhead.type == "ELSE_IF":
         match("ELSE_IF")
+        cpp_file.write(
+            f"\telse if("
+        )
         checkComparison()
-        match("COLON")
-        checkBody()
+        match("OPEN_CURLY_BRACE")
+        cpp_file.write(
+            f"){{\n"
+        )
+        Body()
 
-    if lookAhead.type == "ELSE":
+        match("CLOSE_CURLY_BRACE")
+        cpp_file.write(
+            f"\n\t}}\n"
+        )
+
+    elif lookAhead.type == "ELSE":
         match("ELSE")
-        match("COLON")
-        checkBody()
+        cpp_file.write(
+            f"\telse"
+        )
+        match("OPEN_CURLY_BRACE")
+        cpp_file.write(
+            f"{{\n"
+        )
+        Body()
+
+        match("CLOSE_CURLY_BRACE")
+        cpp_file.write(
+            f"\n\t}}\n"
+        )
 
 def checkBody():
     if lookAhead.type == "ROBOT":
@@ -350,10 +407,19 @@ def checkBody():
 
 # corpoOnEntry > r.#Var = tipoDado | r.#Var(parametros) | ϵ
 def Body():
+    look = lookAhead.type
     if (lookAhead.type == "ROBOT" or lookAhead.type == "WORLDMODEL" or 
         lookAhead.type == "VARIABLE_DECLARATION" or lookAhead.type == "IDENTIFIER" or
         lookAhead.type == "IF"):
+        if look == "ROBOT" or look == "WORLDMODEL":
+            cpp_file.write(
+                f"\t"
+            )   
         checkBody()
+        if look == "ROBOT" or look == "WORLDMODEL":
+            cpp_file.write(
+                f";\n"
+            )
         Body()
 
 # onEntry > -> corpoOnEntry

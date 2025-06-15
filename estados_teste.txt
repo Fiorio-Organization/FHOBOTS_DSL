@@ -12,34 +12,36 @@ State: GotoPoint
     r.setObjective(r.x,r.y)
     r.setOrientationObjective(ball)
 
-    if ((15>10 and 'a' != x) or world.isStuck(robot) == r.stop()):
+    if ((15>10 and 'a' != x) or world.isStuck(robot) == r.stop()){
         r.stop()
 
-        if r.isStopped == false:
-            if world.isPlayingLeft == true:
+        if r.isStopped == false{
+            if world.isPlayingLeft == true {
                 world.isStuck(robot)  
-        else 
-            if r.isStopped != false:
-                r.stop()
-    else:
+            }
+        }
+        else if r.isStopped != false{
+            r.stop()
+        }
+    }else{
         r.move(1)
+    }
+
+    if 2 < 12{
     
-    if 2 < 12:
-    
-    else if r.robotTimer >= 10:
+    }else if r.robotTimer >= 10{
         r.setObjective(r.x,r.y)
-
-@   if 15>10 :
+    }
+@   if 15>10{
         r.stop()
+        world.isPlayingLeft = 0
 
-        if r.isStopped == false:
-            if world.isPlayingLeft == true:
-                world.isStuck(robot)  
-        else 
-            if r.isStopped != false:
-                r.stop()
-    else:
+        if r.isStopped == false{
+            if world.isPlayingLeft == true {world.isStuck(robot)}
+        }else if r.isStopped != false{r.stop()}
+    }else{
         r.move(1)
+    }
 
 <-  r.isStopped = false
     varY = x

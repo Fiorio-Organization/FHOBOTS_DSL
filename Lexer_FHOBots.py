@@ -9,10 +9,10 @@ import sys
 tokens = (
     "ONENTRY","ONSTATE","ONEXIT","TRANSITION", "STATE_DECLARATION", "ROBOT", "WORLDMODEL",
     "ARITHMETIC_OPERATOR", "ASSIGNMENT_OPERATOR", "ROLE_DECLARATION",
-    "STATE_TRANSITION", "OPEN_BRACKET", "CLOSE_BRACKET",
+    "STATE_TRANSITION", "OPEN_BRACKET", "CLOSE_BRACKET","OPEN_CURLY_BRACE", "CLOSE_CURLY_BRACE",
     "OPEN_PARENTHESIS", "CLOSE_PARENTHESIS", "SEPARATOR", "IDENTIFIER",
     "VARIABLE_DECLARATION", "BOOL", "FLOAT_DOUBLE", "INT", "CHAR", "STRING", 
-    "IF","ELIF", "ELSE", "IF_SEP", "COLON", "COMPARISON_OPERATOR"
+    "IF","ELIF", "ELSE", "IF_SEP", "COMPARISON_OPERATOR"
 )
 
 t_ONSTATE = "\@"
@@ -23,6 +23,8 @@ t_OPEN_BRACKET = "\["
 t_CLOSE_BRACKET = "\]"
 t_OPEN_PARENTHESIS = "\("
 t_CLOSE_PARENTHESIS = "\)"
+t_OPEN_CURLY_BRACE = "\{"
+t_CLOSE_CURLY_BRACE = "\}"
 t_SEPARATOR = "\,"
 t_IDENTIFIER = "[A-Za-z]\w*"
 t_FLOAT_DOUBLE = "\d+\.\d+"
@@ -68,7 +70,7 @@ def t_IF(t):
     return t
 
 def t_ELSE_IF(t):
-    "else\s+if\s"
+    "else\sif\s"
     return t
 
 def t_ELSE(t):
@@ -77,10 +79,6 @@ def t_ELSE(t):
 
 def t_IF_SEP(t):
     "and|or"
-    return t
-
-def t_COLON(t):
-    ":"
     return t
 
 # garantindo ordem de prioridade / 
