@@ -14,28 +14,30 @@ lexer = initializeLexer("DSL_Fhobots.txt")
 lookAhead = lexer.token() # Inicialiando o lookAhead
 
 # roles e estados declarados na Máquina de Estados
-def loadRolesAndStatesFromXML(xml_file):
-    roles_states = {} # dicionario de roles e states
+def loadFromXML(xml_file, wanted):
+    result = {} # dicionario de roles e states
     tree = ET.parse(xml_file) # tree recebe estrutura xml
     root = tree.getroot() # obtem raiz State
     # obtendo todos os name de states em cada category do arquivo xml
-    for category in root.findall('category'):
-        role_name = category.get('name')
+    for category in root.findall('.//category'):
+        category_name = category.get('name')
         # encontra e associa um state a uma role (chave)
-        states = [state.get('name') for state in category.findall('state')] # states.append(state.get('name'))
-        roles_states[role_name] = states 
-    return roles_states
+        items = [elem.get('name') for elem in category.findall(wanted)]
+        if items:
+            result[category_name] = items
+    return result
 
-rolesAndStatesFromStateMachine = loadRolesAndStatesFromXML("states.xml")
-#print(rolesAndStatesFromStateMachine)
+rolesAndStatesFromStateMachine = loadFromXML("states.xml",'state')
+robotAttributes = loadFromXML("states.xml",'Attribute')
+robotMethods = loadFromXML("states.xml",'Method')
 
 # lista com Roles e States
 rolesAndStates ={"roles": list(rolesAndStatesFromStateMachine.keys()),
                  "states": [state for states in rolesAndStatesFromStateMachine.values() for state in states]}
 
 # class robot
-robotMethods = {"move", "stop", "setObjective", "setOrientationObjective", "resetRobotTimers", "incrementRobotTimerStuckWithWall"}
-robotAttributes = {"isStopped", "robotTimer", "x", "y","xObj", "yObj","role", "robotTimerSlidingOnTheWall"}
+#robotMethods = {"move", "stop", "setObjective", "setOrientationObjective", "resetRobotTimers", "incrementRobotTimerStuckWithWall"}
+#robotAttributes = {"isStopped", "robotTimer", "x", "y","xObj", "yObj","role", "robotTimerSlidingOnTheWall"}
 
 # class worldModel
 worldModelAttributes = {"isPlayingLeft", "ball"}
@@ -262,13 +264,15 @@ def checkWorldModel():
         )
 
 def checkRobotAttributes(attribute, line):
-    if not attribute in robotAttributes:
+    #if not attribute in robotAttributes:
+    if not any(attribute == attr for attrs in robotAttributes.values() for attr in attrs):
         print("Semantic error on line " + str(line) +":",
         "Attribute " + attribute + " doesn't exist in Robot")
         sys.exit(1)
 
 def checkRobotMethods(method, line):
-    if not method in robotMethods:
+    #if not method in robotMethods:
+    if not any(method == m for methods in robotMethods.values() for m in methods):
         print("Semantic error on line " + str(line) +":",
         "Method " + method + " doesn't exist in Robot")
         sys.exit(1)
@@ -579,6 +583,21 @@ def printRolesAndStates():
         for state in states:
             print(f"  - State: {state}")
 
+def printRobotAttributes():
+    print("Robot Attributes:")
+    for categoria, atributos in robotAttributes.items():
+        print(f"Category: {categoria}")
+        for atributo in atributos:
+            print(f"  - Attribute: {atributo}")
+
+def printRobotMethods():
+    print("Robot Methods:")
+    for categoria, metodos in robotMethods.items():
+        print(f"Category: {categoria}")
+        for metodo in metodos:
+            print(f"  - Method: {metodo}")
+
+
 def printRolesAndStatesList():
     print("Roles and States List:")
     for role in rolesAndStates["roles"]:
@@ -590,4 +609,6 @@ print("--------")
 print("DEBUG\n")
 #printDeclaredVars()
 #printRolesAndStates()
+#printRobotAttributes()
+#printRobotMethods()
 #printRolesAndStatesList()

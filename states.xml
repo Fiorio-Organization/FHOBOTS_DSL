@@ -1,59 +1,106 @@
 <?xml version='1.0' encoding='utf-8'?>
-<states>
-  <category name="Attacker">
-    <state name="SeekBallATK" />
-    <state name="ShotToGoal" />
-    <state name="SpinATK" />
-  </category>
-  <category name="AttackerCentral">
-    <state name="ATC_SeekBall" />
-    <state name="ATC_ShotToGoal" />
-    <state name="ATC_Spin" />
-  </category>
-  <category name="Common">
-    <state name="Backoff" />
-    <state name="GotoBall" />
-    <state name="GotoPoint" />
-    <state name="Idlestate" />
-    <state name="IsNotMoving" />
-    <state name="IsSlidingOnTheWall" />
-    <state name="IsStuckAtByline" />
-    <state name="OrientationtoPoint" />
-    <state name="Spin" />
-  </category>
-  <category name="Defender">
-    <state name="ClearBall" />
-    <state name="SeekBall" />
-    <state name="ShotBallDF" />
-  </category>
-  <category name="DefenderCentral">
-    <state name="DFC_ClearSideBall" />
-    <state name="DFC_GotoPoint" />
-    <state name="DFC_OrientationtoPoint" />
-    <state name="DFC_SeekBall" />
-    <state name="DFC_Spin" />
-  </category>
-  <category name="DefenderLeft">
-    <state name="DFL_GotoPoint" />
-    <state name="DFL_OrientationtoPoint" />
-    <state name="DFL_SeekBall" />
-    <state name="DFL_Spin" />
-  </category>
-  <category name="DefenderRight">
-    <state name="DFR_GotoPoint" />
-    <state name="DFR_OrientationtoPoint" />
-    <state name="DFR_SeekBall" />
-    <state name="DFR_Spin" />
-  </category>
-  <category name="Game_events">
-    <state name="GoalKick" />
-    <state name="Penalty" />
-    <state name="PenaltyGK" />
-  </category>
-  <category name="Goalkeeper">
-    <state name="BackoffGK" />
-    <state name="ClearSideBallGK" />
-    <state name="SeekBallGK" />
-    <state name="SpinGK" />
-  </category>
-</states>
+<root>
+  <states>
+    <category name="Attacker">
+      <state name="SeekBallATK" />
+      <state name="ShotToGoal" />
+      <state name="SpinATK" />
+    </category>
+    <category name="AttackerCentral">
+      <state name="ATC_SeekBall" />
+      <state name="ATC_ShotToGoal" />
+      <state name="ATC_Spin" />
+    </category>
+    <category name="Common">
+      <state name="Backoff" />
+      <state name="GotoBall" />
+      <state name="GotoPoint" />
+      <state name="Idlestate" />
+      <state name="IsNotMoving" />
+      <state name="IsSlidingOnTheWall" />
+      <state name="IsStuckAtByline" />
+      <state name="OrientationtoPoint" />
+      <state name="Spin" />
+    </category>
+    <category name="Defender">
+      <state name="ClearBall" />
+      <state name="SeekBall" />
+      <state name="ShotBallDF" />
+    </category>
+    <category name="DefenderCentral">
+      <state name="DFC_ClearSideBall" />
+      <state name="DFC_GotoPoint" />
+      <state name="DFC_OrientationtoPoint" />
+      <state name="DFC_SeekBall" />
+      <state name="DFC_Spin" />
+    </category>
+    <category name="DefenderLeft">
+      <state name="DFL_GotoPoint" />
+      <state name="DFL_OrientationtoPoint" />
+      <state name="DFL_SeekBall" />
+      <state name="DFL_Spin" />
+    </category>
+    <category name="DefenderRight">
+      <state name="DFR_GotoPoint" />
+      <state name="DFR_OrientationtoPoint" />
+      <state name="DFR_SeekBall" />
+      <state name="DFR_Spin" />
+    </category>
+    <category name="Game_events">
+      <state name="GoalKick" />
+      <state name="Penalty" />
+      <state name="PenaltyGK" />
+    </category>
+    <category name="Goalkeeper">
+      <state name="BackoffGK" />
+      <state name="ClearSideBallGK" />
+      <state name="SeekBallGK" />
+      <state name="SpinGK" />
+    </category>
+  </states>
+  <robot>
+    <category name="robotAttributes">
+      <Attribute name="controller" />
+      <Attribute name="id" />
+      <Attribute name="isStopped" />
+      <Attribute name="leftReverse" />
+      <Attribute name="leftWheel" />
+      <Attribute name="oObj" />
+      <Attribute name="orientation" />
+      <Attribute name="rightReverse" />
+      <Attribute name="rightWheel" />
+      <Attribute name="robotTimer" />
+      <Attribute name="robotTimerSideBall" />
+      <Attribute name="robotTimerSlidingOnTheWall" />
+      <Attribute name="vorientation" />
+      <Attribute name="vx" />
+      <Attribute name="vy" />
+      <Attribute name="xObj" />
+      <Attribute name="yObj" />
+    </category>
+    <category name="robotMethods">
+      <Method name="incrementRobotTimerStuckWithWall" />
+      <Method name="incrementRobotTimerStuckWithWall" />
+      <Method name="move" />
+      <Method name="moveBackward" />
+      <Method name="moveBackward" />
+      <Method name="moveForward" />
+      <Method name="moveForward" />
+      <Method name="resetRobotTimers" />
+      <Method name="resetRobotTimers" />
+      <Method name="setObjective" />
+      <Method name="setObjective" />
+      <Method name="setOrientationObjective" />
+      <Method name="setOrientationObjective" />
+      <Method name="setPose" />
+      <Method name="setRobotTimer" />
+      <Method name="setVelocity" />
+      <Method name="spinClockWise" />
+      <Method name="spinClockWise" />
+      <Method name="spinCounterClockWise" />
+      <Method name="spinCounterClockWise" />
+      <Method name="stop" />
+      <Method name="turnOnController" />
+    </category>
+  </robot>
+</root>
