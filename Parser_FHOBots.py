@@ -27,24 +27,20 @@ def loadFromXML(xml_file, wanted):
             result[category_name] = items
     return result
 
+# State Factory
 rolesAndStatesFromStateMachine = loadFromXML("states.xml",'state')
+# class robot
 robotAttributes = loadFromXML("states.xml",'Attribute')
 robotMethods = loadFromXML("states.xml",'Method')
+# class worldModel
+worldModelAttributes = {"isPlayingLeft", "ball"}
+worldModelMethods = {"isStuck", "isStuckAtByline", "isSlidingOnTheWall", "isAtAtkPosition", "isNearBall", "distanceTo", "isNearToDeffenseArea"}
+# declared vars
+declaredVars = {}
 
 # lista com Roles e States
 rolesAndStates ={"roles": list(rolesAndStatesFromStateMachine.keys()),
                  "states": [state for states in rolesAndStatesFromStateMachine.values() for state in states]}
-
-# class robot
-#robotMethods = {"move", "stop", "setObjective", "setOrientationObjective", "resetRobotTimers", "incrementRobotTimerStuckWithWall"}
-#robotAttributes = {"isStopped", "robotTimer", "x", "y","xObj", "yObj","role", "robotTimerSlidingOnTheWall"}
-
-# class worldModel
-worldModelAttributes = {"isPlayingLeft", "ball"}
-worldModelMethods = {"isStuck", "isStuckAtByline", "isSlidingOnTheWall", "isAtAtkPosition", "isNearBall", "distanceTo", "isNearToDeffenseArea"}
-
-# declared vars
-declaredVars = {}
 
     ########################
 #   Verificar Existencia de Role e Estado  #
@@ -86,7 +82,6 @@ def link_transition():
             new_role()
         elif lookAhead.type == "STATE_TRANSITION":
             transition_state()
-        
 
 # estado_de_transição > $#nome_do_estado [condição] [tratativas] link_transition 
 def transition_state():
@@ -348,9 +343,9 @@ def dataType():
         match("CHAR")
     elif lookAhead.type == "IDENTIFIER":
         match("IDENTIFIER")
-    elif lookAhead.type == "ROBOT": # r.attribute
+    elif lookAhead.type == "ROBOT":
         checkRobot()
-    elif lookAhead.type == "WORLDMODEL": # world.attribute
+    elif lookAhead.type == "WORLDMODEL":
         checkWorldModel()
 
 def checkIfChaining():
@@ -596,7 +591,6 @@ def printRobotMethods():
         print(f"Category: {categoria}")
         for metodo in metodos:
             print(f"  - Method: {metodo}")
-
 
 def printRolesAndStatesList():
     print("Roles and States List:")
