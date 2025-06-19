@@ -8,7 +8,11 @@ State: ShotToGoal
         r.incrementRobotTimerStuckWithWall()
     }
     
-<-  r.move()
+<-  r.move() # comentario linha
+    '''comentario 
+     
+livre'''
+    r.oObj = "string" 
 
 <>  Role: Common
     $GotoBall [world.distanceTo(robot, world.ball) > 0.15] []
@@ -19,6 +23,6 @@ State: ShotToGoal
 
     $IsNotMoving [r.robotTimer > 100] []
 
-    $BackOff [world.isPlayingLeft == true and r.x < 0.65 or
+    $BackOff [world.isPlayingLeft == true and r.x < -0.65 or
         world.isPlayingLeft == false and r.x > 0.65 or
         world.isNearToDeffenseArea(robot) == true] []

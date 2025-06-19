@@ -347,6 +347,20 @@ def dataType():
         checkRobot()
     elif lookAhead.type == "WORLDMODEL":
         checkWorldModel()
+    elif lookAhead.type == "ARITHMETIC_OPERATOR":
+        if lookAhead.value == "-": # -: NEGATIVE SIGN
+            match("ARITHMETIC_OPERATOR")
+            cpp_file.write(
+                    f"-{lookAhead.value}"
+                )
+            if lookAhead.type == "INT":
+                match("INT")
+            else: #elif lookAhead.type == "FLOAT_DOUBLE":
+                match("FLOAT_DOUBLE")
+        else:
+            print("Semantic error on line " + str(lookAhead.lineno) +":",
+                  "invalid arithmetic signal")
+        
 
 def checkIfChaining():
     if lookAhead.type == "IF_SEP":
@@ -455,6 +469,17 @@ def checkBody():
     elif lookAhead.type == "IF":
         checkComparisonStatement()
 
+def checkComment():
+    com = lookAhead.value
+    if lookAhead.value[0] == "#":
+        # Substitui o # por //
+        com = "//" + com[1:]
+
+    cpp_file.write(
+        f"{com}\n"
+    )
+    match("COMMENT")
+    
 # corpoOnEntry > r.#Var = tipoDado | r.#Var(parametros) | ϵ
 def Body():
     look = lookAhead.type
@@ -471,6 +496,10 @@ def Body():
                 f";\n"
             )
         Body()
+    if lookAhead.type == "COMMENT":
+        checkComment()
+        Body()
+        
 
 # onEntry > -> corpoOnEntry
 def onEntry():

@@ -22,6 +22,11 @@ void ShotToGoal::onState(Robot * robot, IWorldModel * worldModel){
 
 void ShotToGoal::onExit(Robot * robot, IWorldModel * worldModel){
 	robot->move();
+// comentario linha
+'''comentario 
+     
+livre'''
+	robot->oObj = "string";
 }
 
 void ShotToGoal::transition(Robot * robot, IWorldModel * worldModel){
@@ -37,7 +42,7 @@ void ShotToGoal::transition(Robot * robot, IWorldModel * worldModel){
 	if(robot->robotTimer > 100){
 	return StateFactory::getInstance("IsNotMoving");
 }
-	if(worldModelVss->isPlayingLeft == true && robot->x < 0.65 || worldModelVss->isPlayingLeft == false && robot->x > 0.65 || worldModelVss->isNearToDeffenseArea(robot) == true){
+	if(worldModelVss->isPlayingLeft == true && robot->x < -0.65 || worldModelVss->isPlayingLeft == false && robot->x > 0.65 || worldModelVss->isNearToDeffenseArea(robot) == true){
 	return StateFactory::getInstance("BackOff");
 }
 }

@@ -12,7 +12,7 @@ tokens = (
     "STATE_TRANSITION", "OPEN_BRACKET", "CLOSE_BRACKET","OPEN_CURLY_BRACE", "CLOSE_CURLY_BRACE",
     "OPEN_PARENTHESIS", "CLOSE_PARENTHESIS", "SEPARATOR", "IDENTIFIER",
     "VARIABLE_DECLARATION", "BOOL", "FLOAT_DOUBLE", "INT", "CHAR", "STRING", 
-    "IF","ELIF", "ELSE", "IF_SEP", "COMPARISON_OPERATOR"
+    "IF","ELIF", "ELSE", "IF_SEP", "COMPARISON_OPERATOR", "COMMENT","COMMENT_LINE"
 )
 
 t_ONSTATE = "\@"
@@ -29,6 +29,8 @@ t_SEPARATOR = "\,"
 t_IDENTIFIER = "[A-Za-z]\w*"
 t_CHAR = "\'[A-Za-z0-9]\'"
 t_STRING = "\"\w*\""
+#t_COMMENT_LINE = "\/\/"
+t_COMMENT = "\#.*|\'\'\'[\s\S]*?\'\'\'" # .* (. = qualquer caractere, exceto nova linha)
 
 def t_FLOAT_DOUBLE(t):
     r"\d+\.\d+"
