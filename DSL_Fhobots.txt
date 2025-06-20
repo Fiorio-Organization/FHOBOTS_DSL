@@ -2,6 +2,8 @@ State: ShotToGoal
 
 ->  r.move()
     r.resetRobotTimers()
+    int x = 0 #declaracao
+    int y = x - 1 * 20
 
 @   r.setObjective(world.ball)
     if world.isStuckAtByline(robot) == true{
@@ -12,10 +14,12 @@ State: ShotToGoal
     '''comentario 
      
 livre'''
-    r.oObj = "string" 
+    r.oObj = "string"
 
 <>  Role: Common
-    $GotoBall [world.distanceTo(robot, world.ball) > 0.15] []
+    $GotoBall [world.distanceTo(robot, world.ball) > 0.14 + 1] [
+        # desenvolver
+    ]
 
     $SpinATK [world.isAtAtkPosition(world.ball) == true and world.isNearBall(robot) == true and (r.y > 0.4 or r.y < 0.4)] []
 

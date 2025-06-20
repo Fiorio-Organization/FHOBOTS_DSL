@@ -162,6 +162,18 @@ def parameters():
         )    
         parameters()
 
+def checkArithmeticChaining():
+    if lookAhead.type == "ARITHMETIC_OPERATOR":
+        cpp_file.write(
+            f" {lookAhead.value} "
+        )
+        match("ARITHMETIC_OPERATOR")
+        cpp_file.write(
+            f"{lookAhead.value}"
+        )
+        dataType()
+        checkArithmeticChaining()
+
 def checkIdentifier():
     global id_state
     global cpp_file
@@ -179,8 +191,20 @@ def checkIdentifier():
         td = lookAhead.value
         dataType()
         cpp_file.write(
-            f" = {td};\n"
+            f" = {td}"
         )
+        checkArithmeticChaining()
+        cpp_file.write(
+            f"; "
+        )
+        
+        if lookAhead.type == "COMMENT":
+            checkComment()
+        
+        else:
+            cpp_file.write(
+                f"\n"
+            )
     
     else:
         print("Semantic error on line " + str(lookAhead.lineno) +":",
@@ -212,8 +236,16 @@ def checkVarDeclaration():
         cpp_file.write(
             f" = {td}"
         )
+        checkArithmeticChaining()
     cpp_file.write(
-            f";\n"
+        f";"
+    )
+    
+    if lookAhead.type == "COMMENT":
+        checkComment()
+    else:
+        cpp_file.write(
+            f"\n"
         )
 
 def checkWorldModelAttributes(attribute, line):
@@ -245,6 +277,7 @@ def checkWorldModel():
         cpp_file.write(
             f" = {td}"
         )
+        checkArithmeticChaining()
     elif lookAhead.type == "OPEN_PARENTHESIS":
         match("OPEN_PARENTHESIS")
         cpp_file.write(
@@ -289,6 +322,7 @@ def checkRobot():
         cpp_file.write(
             f" = {td}"
         )
+        checkArithmeticChaining()
     
     elif lookAhead.type == "OPEN_PARENTHESIS":
         match("OPEN_PARENTHESIS")
@@ -393,6 +427,7 @@ def checkComparison():
                 f"{lookAhead.value}"
             )
         dataType()
+        checkArithmeticChaining()
         if lookAhead.type == "COMPARISON_OPERATOR":
             cpp_file.write(
                 f" {lookAhead.value} "
@@ -403,6 +438,7 @@ def checkComparison():
                 f"{lookAhead.value}"
             )
         dataType()
+        checkArithmeticChaining()
     checkIfChaining()
 
 def checkComparisonStatement():
@@ -493,8 +529,15 @@ def Body():
         checkBody()
         if look == "ROBOT" or look == "WORLDMODEL":
             cpp_file.write(
-                f";\n"
+                f"; "
             )
+            
+            if lookAhead.type == "COMMENT":
+                checkComment()
+            else:
+                cpp_file.write(
+                    f"\n"
+                )
         Body()
     if lookAhead.type == "COMMENT":
         checkComment()
